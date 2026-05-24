@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novel Ideas Taking Shape</title>
+
+  <style>
+    /* Your custom theme */
+    :root {
+      --color-bg-default: #F4F1EA !important;
+      --color-text-default: #2d2d2d !important;
+    }
+
+    body {
+      background-color: var(--color-bg-default);
+      color: var(--color-text-default);
+      font-family: 'Times New Roman', serif !important;
+      line-height: 1.6 !important;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2d2d2d;
+      color: #F4F1EA;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    h1, h2 {
+      margin: 0;
+    }
+
+    /* Grid layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      border-bottom: 1px solid #2d2d2d;
+      padding-bottom: 0.3rem;
+    }
+
+    a {
+      color: #00008B;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      background-color: #2d2d2d;
+      color: #F4F1EA;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
+    }
+
+    /* Dark mode */
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: #f4f1ea;
+    }
+
+    .dark-mode header,
+    .dark-mode footer {
+      background-color: #000;
+      color: #f4f1ea;
+    }
+
+    .dark-mode .card {
+      background: #2a2a2a;
+      border-color: #555;
+      box-shadow: none;
+    }
+
+    .dark-mode a {
+      color: #00c6ff;
+    }
+  </style>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      body.classList.toggle('dark-mode');
+    }
+
+    // Optional: force light mode for printing
+    window.matchMedia('print').addListener(() => {
+      document.body.classList.remove('dark-mode');
+    });
+  </script>
+</head>
+
+<body>
+
+  <header>
+    <h1>Novel Ideas Taking Shape</h1>
+    <p>A collection of evolving research concepts by Rohit Verma</p>
+
+    <!-- Dark mode toggle button -->
+    <button onclick="toggleTheme()"
+            style="position:absolute; top:20px; right:20px; padding:8px 12px;
+                   background:#2d2d2d; color:#F4F1EA; border:none; cursor:pointer;
+                   border-radius:4px;">
+      Toggle Dark Mode
+    </button>
+  </header>
+
+  <!-- GRID OF PROJECTS -->
+  <div class="grid-container">
+
+    <!-- HVDC PROJECT CARD -->
+    <div class="card">
+      <h3>HVDC Tidal Energy Transmission</h3>
+      <p>
+        A novel framework exploring the feasibility of high‑voltage direct current (HVDC) transmission for tidal energy systems.
+        This work evolves through multiple iterations, refining assumptions, models, and engineering considerations.
+      </p>
+
+      <p><strong>Zenodo Series DOI:</strong><br>
+        <a href="https://doi.org/10.5281/zenodo.20361346">10.5281/zenodo.20361346</a>
+      </p>
+
+      <ul>
+        <li>Version 4.0 — <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></li>
+        <li>Version 3.0 — <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></li>
+        <li>Version 2.0 — <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></li>
+        <li>Version 1.0 — <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></li>
+      </ul>
+    </div>
+
+    <!-- SIIC’s PROJECT CARD (placeholder) -->
+    <div class="card">
+      <h3>SIIC’s Project</h3>
+      <p>
+        This section will present the upcoming SIIC’s research concept.
+        Once ready, it will include a description, version history, and Zenodo DOIs.
+      </p>
+      <p><em>Content coming soon.</em></p>
+    </div>
+
+    <!-- THIRD PROJECT CARD (generic placeholder) -->
+    <div class="card">
+      <h3>Upcoming Research Idea</h3>
+      <p>
+        A placeholder for your next major research idea.
+        This card will be updated once the project is ready for public release.
+      </p>
+      <p><em>Details will be added later.</em></p>
+    </div>
+
+  </div>
+
+  <!-- PEER REVIEW / CRITICAL INPUT SECTION -->
+  <section style="max-width: 900px; margin: auto; padding: 2rem;">
+    <h2>Peer Review & Critical Input</h2>
+    <p>
+      This space is reserved for focused, meaningful critique from readers who wish to contribute to the refinement of these research ideas.
+      As an independent researcher, my time is limited, so I kindly request that feedback remain concise, relevant, and technically grounded.
+      If you have identified a genuine gap, inconsistency, or point requiring clarification, your input is welcome.
+    </p>
+
+    <div style="background: #ffffff; border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px;">
+      <h3 style="margin-top: 0;">Submit Focused Feedback</h3>
+      <p>
+        Please use this form only for substantive observations or well‑formed questions related to the research presented here.
+        General comments, casual inquiries, or unrelated messages will not be reviewed.
+      </p>
+
+      <!-- Feedback form (static, GitHub Pages compatible) -->
+      <form action="https://formspree.io/f/your-form-id" method="POST">
+        <label>Your Name (optional)</label><br>
+        <input type="text" name="name" style="width:100%; padding:8px; margin-bottom:1rem;"><br>
+
+        <label>Your Email (optional)</label><br>
+        <input type="email" name="email" style="width:100%; padding:8px; margin-bottom:1rem;"><br>
+
+        <label>Your Technical Feedback</label><br>
+        <textarea name="message" rows="6" style="width:100%; padding:8px; margin-bottom:1rem;" required></textarea><br>
+
+        <button type="submit" style="padding:10px 20px; background:#2d2d2d; color:#F4F1EA; border:none; cursor:pointer;">
+          Submit
+        </button>
+      </form>
+
+      <p style="font-size: 0.9rem; margin-top: 1rem;">
+        *Only relevant, research‑focused feedback will be considered.*
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    © Rohit Verma | ORCID | OSF | Zenodo
+  </footer>
+
+</body>
+</html>
