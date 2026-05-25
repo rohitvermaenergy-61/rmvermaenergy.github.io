@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HVDC Evolution Diagram</title>
+
+  <style>
+    :root {
+      --color-bg-default: #F4F1EA;
+      --color-text-default: #2d2d2d;
+    }
+
+    body {
+      background-color: var(--color-bg-default);
+      color: var(--color-text-default);
+      font-family: 'Times New Roman', serif;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 2rem;
+      border-bottom: 1px solid #2d2d2d;
+      padding-bottom: 0.3rem;
+    }
+
+    a {
+      color: #00008B;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .diagram-box {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 2rem auto;
+      max-width: 1100px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    img {
+      width: 100%;
+      border-radius: 6px;
+      transition: transform 0.4s ease;
+      cursor: zoom-in;
+    }
+
+    img:hover {
+      transform: scale(1.03);
+    }
+
+    .stage-card {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1.5rem;
+    }
+
+    /* Fade-in animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.9s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Sidebar Navigation */
+    #sidebar {
+      position: fixed;
+      top: 120px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: rgba(255,255,255,0.8);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      backdrop-filter: blur(6px);
+      z-index: 999;
+    }
+
+    #sidebar a {
+      font-weight: bold;
+      color: #00008B;
+    }
+
+    /* Back to Top Button */
+    #backToTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 10px 14px;
+      background: #2d2d2d;
+      color: #F4F1EA;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: none;
+      z-index: 1000;
+    }
+
+    /* Dark mode */
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: #F4F1EA;
+    }
+
+    .dark-mode .diagram-box,
+    .dark-mode .stage-card {
+      background: #2a2a2a;
+      border-color: #555;
+    }
+
+    .dark-mode a {
+      color: #F4F1EA;
+    }
+
+    .dark-mode img {
+      filter: brightness(0.9) contrast(1.1);
+    }
+
+    .dark-mode #sidebar {
+      background: rgba(40,40,40,0.8);
+      border-color: #555;
+    }
+
+    .dark-mode #sidebar a {
+      color: #F4F1EA;
+    }
+
+    .dark-mode #backToTop {
+      background: #444;
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Toggle button */
+    #themeToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 12px;
+      background: #2d2d2d;
+      color: #F4F1EA;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sidebar Navigation -->
+  <div id="sidebar">
+    <a href="#diagram">3D Diagram</a>
+    <a href="#v1">Version 1</a>
+    <a href="#v2">Version 2</a>
+    <a href="#v3">Version 3</a>
+    <a href="#v4">Version 4</a>
+  </div>
+
+  <button id="themeToggle">Dark / Light</button>
+
+  <h1 class="fade-in">HVDC Tidal Energy Transmission — Evolution</h1>
+  <p class="fade-in" style="text-align:center; max-width:900px; margin:auto;">
+    A visual and conceptual transformation from the foundational feasibility concept (v1)
+    to the final polished engineering model (v4).
+  </p>
+
+  <!-- Evolution Diagram -->
+  <div id="diagram" class="diagram-box fade-in">
+    <h2>3D Evolution Diagram</h2>
+    <p style="text-align:center;">
+      Hover to zoom. This diagram illustrates the complete transformation across all four versions.
+    </p>
+
+    <img src="hvdc-evolution-diagram.png" alt="HVDC Evolution Diagram">
+  </div>
+
+  <!-- Version Breakdown -->
+  <h2 class="fade-in">Version Breakdown</h2>
+
+  <div id="v1" class="diagram-box stage-card fade-in">
+    <h3>Version 1 — Feasibility Concept</h3>
+    <p>Initial theoretical framework introducing HVDC for tidal systems.</p>
+    <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></p>
+  </div>
+
+  <div id="v2" class="diagram-box stage-card fade-in">
+    <h3>Version 2 — Analytical Refinement</h3>
+    <p>Expanded analytical modeling, refined assumptions, and improved parameter definitions.</p>
+    <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></p>
+  </div>
+
+  <div id="v3" class="diagram-box stage-card fade-in">
+    <h3>Version 3 — Engineering Model</h3>
+    <p>First full 3D engineering visualization showing turbines, subsea cable, and converter stations.</p>
+    <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></p>
+  </div>
+
+  <div id="v4" class="diagram-box stage-card fade-in">
+    <h3>Version 4 — Final Polished Model</h3>
+    <p>Consolidated refinements, corrected assumptions, and publication-ready engineering representation.</p>
+    <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></p>
+  </div>
+
+  <p style="text-align:center; margin-top:2rem;">
+    <a href="index.html">← Back to Main Page</a>
+  </p>
+
+  <!-- Back to Top Button -->
+  <button id="backToTop">↑ Top</button>
+
+  <script>
+    // Apply saved theme
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") document.body.classList.add("dark-mode");
+    });
+
+    // Toggle theme
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      const isDark = document.body.classList.contains("dark-mode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+
+    // Back to Top button logic
+    const topBtn = document.getElementById("backToTop");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        topBtn.style.display = "block";
+      } else {
+        topBtn.style.display = "none";
+      }
+    });
+
+    topBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+
+</body>
+</html>
