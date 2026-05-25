@@ -6,17 +6,17 @@
   <title>Novel Ideas Taking Shape</title>
 
   <style>
-    /* Your custom theme */
+    /* Base theme */
     :root {
-      --color-bg-default: #F4F1EA !important;
-      --color-text-default: #2d2d2d !important;
+      --color-bg-default: #F4F1EA;
+      --color-text-default: #2d2d2d;
     }
 
     body {
       background-color: var(--color-bg-default);
       color: var(--color-text-default);
-      font-family: 'Times New Roman', serif !important;
-      line-height: 1.6 !important;
+      font-family: 'Times New Roman', serif;
+      line-height: 1.6;
       margin: 0;
       padding: 0;
     }
@@ -95,6 +95,30 @@
     .dark-mode a {
       color: #00c6ff;
     }
+
+    /* Fix form visibility in dark mode */
+    .dark-mode form label,
+    .dark-mode h3,
+    .dark-mode p {
+      color: #f4f1ea !important;
+    }
+
+    .dark-mode input,
+    .dark-mode textarea {
+      background-color: #2d2d2d;
+      color: #f4f1ea;
+      border: 1px solid #888;
+    }
+
+    .dark-mode button {
+      background-color: #f4f1ea;
+      color: #2d2d2d;
+    }
+
+    /* Smooth transition */
+    body {
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
   </style>
 
   <script>
@@ -103,7 +127,7 @@
       body.classList.toggle('dark-mode');
     }
 
-    // Optional: force light mode for printing
+    // Force light mode for printing
     window.matchMedia('print').addListener(() => {
       document.body.classList.remove('dark-mode');
     });
@@ -116,12 +140,12 @@
     <h1>Novel Ideas Taking Shape</h1>
     <p>A collection of evolving research concepts by Rohit Verma</p>
 
-    <!-- Dark mode toggle button -->
-    <button onclick="toggleTheme()"
+    <!-- Updated toggle button -->
+    <button onclick="toggleTheme()" 
             style="position:absolute; top:20px; right:20px; padding:8px 12px;
                    background:#2d2d2d; color:#F4F1EA; border:none; cursor:pointer;
                    border-radius:4px;">
-      Toggle Dark Mode
+      Dark / Light
     </button>
   </header>
 
@@ -148,7 +172,7 @@
       </ul>
     </div>
 
-    <!-- SIIC’s PROJECT CARD (placeholder) -->
+    <!-- SIIC’s PROJECT CARD -->
     <div class="card">
       <h3>SIIC’s Project</h3>
       <p>
@@ -158,7 +182,7 @@
       <p><em>Content coming soon.</em></p>
     </div>
 
-    <!-- THIRD PROJECT CARD (generic placeholder) -->
+    <!-- THIRD PROJECT CARD -->
     <div class="card">
       <h3>Upcoming Research Idea</h3>
       <p>
@@ -170,7 +194,7 @@
 
   </div>
 
-  <!-- PEER REVIEW / CRITICAL INPUT SECTION -->
+  <!-- FEEDBACK SECTION -->
   <section style="max-width: 900px; margin: auto; padding: 2rem;">
     <h2>Peer Review & Critical Input</h2>
     <p>
@@ -186,7 +210,6 @@
         General comments, casual inquiries, or unrelated messages will not be reviewed.
       </p>
 
-      <!-- Feedback form (static, GitHub Pages compatible) -->
       <form action="https://formspree.io/f/your-form-id" method="POST">
         <label>Your Name (optional)</label><br>
         <input type="text" name="name" style="width:100%; padding:8px; margin-bottom:1rem;"><br>
