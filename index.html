@@ -3,36 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Novel Ideas Taking Shape</title>
-
+  <title>RMVermaEnergy - Research Portfolio</title>
   <style>
-    :root {
-      --color-bg-default: #F4F1EA;
-      --color-text-default: #2d2d2d;
-    }
-
     body {
-      background-color: var(--color-bg-default);
-      color: var(--color-text-default);
-      font-family: 'Times New Roman', serif;
+      font-family: "Times New Roman", serif;
+      background-color: #121212;
+      color: #e0e0e0;
       margin: 0;
-      padding: 2rem;
-      line-height: 1.6;
-    }
-
-    h1 {
+      padding: 0;
       text-align: center;
-      margin-bottom: 2rem;
     }
 
-    h2 {
-      margin-top: 0;
-      border-bottom: 1px solid #2d2d2d;
-      padding-bottom: 0.3rem;
+    .card-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 900px;
+    }
+
+    .card {
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      text-align: left;
+    }
+
+    h1, h2 {
+      color: #ffffff;
     }
 
     a {
-      color: #00008B;
+      color: #9ecfff;
       text-decoration: none;
     }
 
@@ -40,54 +45,45 @@
       text-decoration: underline;
     }
 
-    /* Vertical card layout */
-    .card-container {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    .card {
-      background: #ffffff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    /* Dark mode */
-    .dark-mode {
-      background-color: #1e1e1e;
-      color: #F4F1EA;
-    }
-
-    .dark-mode .card {
-      background: #2a2a2a;
-      border-color: #555;
-    }
-
-    .dark-mode a {
-      color: #F4F1EA;
-    }
-
-    .dark-mode img {
-      filter: brightness(0.9) contrast(1.1);
-    }
-
-    /* Toggle button */
     #themeToggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 8px 12px;
-      background: #2d2d2d;
-      color: #F4F1EA;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #333;
+      color: #fff;
       border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
       cursor: pointer;
-      border-radius: 4px;
-      z-index: 1000;
+    }
+
+    #themeToggle:hover {
+      background-color: #555;
+    }
+
+    .logo {
+      display: block;
+      margin: 10px auto 20px;
+      width: 250px;
+      max-width: 80%;
+      height: auto;
+    }
+
+    /* Light theme */
+    body.light-mode {
+      background-color: #f5f5f5;
+      color: #222;
+    }
+
+    body.light-mode .card {
+      background-color: #ffffff;
+      color: #222;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode #themeToggle {
+      background-color: #ddd;
+      color: #000;
     }
   </style>
 </head>
@@ -97,83 +93,45 @@
 
   <h1>Novel Ideas Taking Shape</h1>
 
+  <!-- Logo Section -->
+  <img src="rmv-logo.png" alt="RMVermaEnergy Research Portfolio Logo" class="logo">
+
   <div class="card-container">
 
     <!-- HVDC Section -->
     <div class="card">
       <h2>HVDC Tidal Energy Transmission</h2>
-
       <p>
-        A novel framework exploring the feasibility of high-voltage direct current (HVDC)
-        transmission for tidal energy systems. This work evolves through multiple iterations,
-        refining assumptions, models, and engineering considerations.
+        A novel framework exploring the feasibility of high-voltage direct current (HVDC) transmission for tidal energy systems.
+        This work evolves through multiple iterations, refining assumptions, models, and engineering considerations.
       </p>
 
-      <p><strong>Zenodo Series DOI:</strong><br>
-        <a href="https://doi.org/10.5281/zenodo.20361346">10.5281/zenodo.20361346</a>
-      </p>
-
+      <p><strong>Zenodo Series DOI:</strong> 10.5281/zenodo.20361346</p>
       <ul>
-        <li>Version 4.0 — <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></li>
-        <li>Version 3.0 — <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></li>
-        <li>Version 2.0 — <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></li>
-        <li>Version 1.0 — <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></li>
+        <li>Version 4.0 — <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></li>
+        <li>Version 3.0 — <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></li>
+        <li>Version 2.0 — <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></li>
+        <li>Version 1.0 — <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></li>
       </ul>
 
-      <!-- Thumbnail + Link Block -->
-      <div style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
-
-        <!-- Thumbnail (upload hvdc-evolution-thumb.png) -->
-        <img src="hvdc-evolution-thumb.png"
-             alt="HVDC Evolution Thumbnail"
-             style="width:110px; border-radius:6px; cursor:pointer; transition:transform 0.3s ease;"
-             onmouseover="this.style.transform='scale(1.05)'"
-             onmouseout="this.style.transform='scale(1)'"
-             onclick="window.location.href='hvdc-evolution.html'">
-
-        <!-- Link -->
-        <a href="hvdc-evolution.html"
-           style="font-weight:bold; font-size:1.1rem;">
-          🔗 View Evolution →
-        </a>
-
-      </div>
+      <p>
+        <a href="hvdc-evolution.html">🔗 View Evolution →</a>
+      </p>
     </div>
 
     <!-- SIIC Section -->
     <div class="card">
       <h2>SIIC’s Project</h2>
-      <p>
-        This section will present the upcoming SIIC’s research concept. Once ready, it will include
-        a description, version history, and Zenodo DOIs.
-      </p>
-      <p><em>Content coming soon.</em></p>
-    </div>
-
-    <!-- Upcoming Research Section -->
-    <div class="card">
-      <h2>Upcoming Research Idea</h2>
-      <p>
-        A placeholder for your next major research idea. This card will be updated once the project
-        is ready for public release.
-      </p>
-      <p><em>Details will be added later.</em></p>
+      <p>Details coming soon...</p>
     </div>
 
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") document.body.classList.add("dark-mode");
-    });
-
-    document.getElementById("themeToggle").addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-      const isDark = document.body.classList.contains("dark-mode");
-      localStorage.setItem("theme", isDark ? "dark" : "light");
+    const toggleButton = document.getElementById('themeToggle');
+    toggleButton.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
     });
   </script>
-
 </body>
 </html>
