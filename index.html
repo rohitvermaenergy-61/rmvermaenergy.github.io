@@ -6,7 +6,6 @@
   <title>Novel Ideas Taking Shape</title>
 
   <style>
-    /* Base theme */
     :root {
       --color-bg-default: #F4F1EA;
       --color-text-default: #2d2d2d;
@@ -16,42 +15,17 @@
       background-color: var(--color-bg-default);
       color: var(--color-text-default);
       font-family: 'Times New Roman', serif;
+      margin: 0;
+      padding: 2rem;
       line-height: 1.6;
-      margin: 0;
-      padding: 0;
     }
 
-    header {
-      background-color: #2d2d2d;
-      color: #F4F1EA;
+    h1 {
       text-align: center;
-      padding: 2rem;
-      position: relative;
+      margin-bottom: 2rem;
     }
 
-    h1, h2 {
-      margin: 0;
-    }
-
-    /* Grid layout */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .card {
-      background: #ffffff;
-      border: 1px solid #ccc;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .card h3 {
+    h2 {
       margin-top: 0;
       border-bottom: 1px solid #2d2d2d;
       padding-bottom: 0.3rem;
@@ -66,98 +40,73 @@
       text-decoration: underline;
     }
 
-    footer {
-      background-color: #2d2d2d;
-      color: #F4F1EA;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 3rem;
+    /* Vertical card layout */
+    .card-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     /* Dark mode */
     .dark-mode {
       background-color: #1e1e1e;
-      color: #f4f1ea;
-    }
-
-    .dark-mode header,
-    .dark-mode footer {
-      background-color: #000;
-      color: #f4f1ea;
+      color: #F4F1EA;
     }
 
     .dark-mode .card {
       background: #2a2a2a;
       border-color: #555;
-      box-shadow: none;
     }
 
     .dark-mode a {
-      color: #00c6ff;
+      color: #F4F1EA;
     }
 
-    /* Fix form visibility in dark mode */
-    .dark-mode form label,
-    .dark-mode h3,
-    .dark-mode p {
-      color: #f4f1ea !important;
+    .dark-mode img {
+      filter: brightness(0.9) contrast(1.1);
     }
 
-    .dark-mode input,
-    .dark-mode textarea {
-      background-color: #2d2d2d;
-      color: #f4f1ea;
-      border: 1px solid #888;
-    }
-
-    .dark-mode button {
-      background-color: #f4f1ea;
-      color: #2d2d2d;
-    }
-
-    /* Smooth transition */
-    body {
-      transition: background-color 0.4s ease, color 0.4s ease;
+    /* Toggle button */
+    #themeToggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 12px;
+      background: #2d2d2d;
+      color: #F4F1EA;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      z-index: 1000;
     }
   </style>
-
-  <script>
-    function toggleTheme() {
-      const body = document.body;
-      body.classList.toggle('dark-mode');
-    }
-
-    // Force light mode for printing
-    window.matchMedia('print').addListener(() => {
-      document.body.classList.remove('dark-mode');
-    });
-  </script>
 </head>
 
 <body>
+  <button id="themeToggle">Dark / Light</button>
 
-  <header>
-    <h1>Novel Ideas Taking Shape</h1>
-    <p>A collection of evolving research concepts by Rohit Verma</p>
+  <h1>Novel Ideas Taking Shape</h1>
 
-    <!-- Updated toggle button -->
-    <button onclick="toggleTheme()" 
-            style="position:absolute; top:20px; right:20px; padding:8px 12px;
-                   background:#2d2d2d; color:#F4F1EA; border:none; cursor:pointer;
-                   border-radius:4px;">
-      Dark / Light
-    </button>
-  </header>
+  <div class="card-container">
 
-  <!-- GRID OF PROJECTS -->
-  <div class="grid-container">
-
-    <!-- HVDC PROJECT CARD -->
+    <!-- HVDC Section -->
     <div class="card">
-      <h3>HVDC Tidal Energy Transmission</h3>
+      <h2>HVDC Tidal Energy Transmission</h2>
+
       <p>
-        A novel framework exploring the feasibility of high‑voltage direct current (HVDC) transmission for tidal energy systems.
-        This work evolves through multiple iterations, refining assumptions, models, and engineering considerations.
+        A novel framework exploring the feasibility of high-voltage direct current (HVDC)
+        transmission for tidal energy systems. This work evolves through multiple iterations,
+        refining assumptions, models, and engineering considerations.
       </p>
 
       <p><strong>Zenodo Series DOI:</strong><br>
@@ -165,75 +114,66 @@
       </p>
 
       <ul>
-        <li>Version 4.0 — <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></li>
-        <li>Version 3.0 — <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></li>
-        <li>Version 2.0 — <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></li>
-        <li>Version 1.0 — <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></li>
+        <li>Version 4.0 — <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></li>
+        <li>Version 3.0 — <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></li>
+        <li>Version 2.0 — <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></li>
+        <li>Version 1.0 — <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></li>
       </ul>
+
+      <!-- Thumbnail + Link Block -->
+      <div style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
+
+        <!-- Thumbnail (upload hvdc-evolution-thumb.png) -->
+        <img src="hvdc-evolution-thumb.png"
+             alt="HVDC Evolution Thumbnail"
+             style="width:110px; border-radius:6px; cursor:pointer; transition:transform 0.3s ease;"
+             onmouseover="this.style.transform='scale(1.05)'"
+             onmouseout="this.style.transform='scale(1)'"
+             onclick="window.location.href='hvdc-evolution.html'">
+
+        <!-- Link -->
+        <a href="hvdc-evolution.html"
+           style="font-weight:bold; font-size:1.1rem;">
+          🔗 View Evolution →
+        </a>
+
+      </div>
     </div>
 
-    <!-- SIIC’s PROJECT CARD -->
+    <!-- SIIC Section -->
     <div class="card">
-      <h3>SIIC’s Project</h3>
+      <h2>SIIC’s Project</h2>
       <p>
-        This section will present the upcoming SIIC’s research concept.
-        Once ready, it will include a description, version history, and Zenodo DOIs.
+        This section will present the upcoming SIIC’s research concept. Once ready, it will include
+        a description, version history, and Zenodo DOIs.
       </p>
       <p><em>Content coming soon.</em></p>
     </div>
 
-    <!-- THIRD PROJECT CARD -->
+    <!-- Upcoming Research Section -->
     <div class="card">
-      <h3>Upcoming Research Idea</h3>
+      <h2>Upcoming Research Idea</h2>
       <p>
-        A placeholder for your next major research idea.
-        This card will be updated once the project is ready for public release.
+        A placeholder for your next major research idea. This card will be updated once the project
+        is ready for public release.
       </p>
       <p><em>Details will be added later.</em></p>
     </div>
 
   </div>
 
-  <!-- FEEDBACK SECTION -->
-  <section style="max-width: 900px; margin: auto; padding: 2rem;">
-    <h2>Peer Review & Critical Input</h2>
-    <p>
-      This space is reserved for focused, meaningful critique from readers who wish to contribute to the refinement of these research ideas.
-      As an independent researcher, my time is limited, so I kindly request that feedback remain concise, relevant, and technically grounded.
-      If you have identified a genuine gap, inconsistency, or point requiring clarification, your input is welcome.
-    </p>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") document.body.classList.add("dark-mode");
+    });
 
-    <div style="background: #ffffff; border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px;">
-      <h3 style="margin-top: 0;">Submit Focused Feedback</h3>
-      <p>
-        Please use this form only for substantive observations or well‑formed questions related to the research presented here.
-        General comments, casual inquiries, or unrelated messages will not be reviewed.
-      </p>
-
-      <form action="https://formspree.io/f/your-form-id" method="POST">
-        <label>Your Name (optional)</label><br>
-        <input type="text" name="name" style="width:100%; padding:8px; margin-bottom:1rem;"><br>
-
-        <label>Your Email (optional)</label><br>
-        <input type="email" name="email" style="width:100%; padding:8px; margin-bottom:1rem;"><br>
-
-        <label>Your Technical Feedback</label><br>
-        <textarea name="message" rows="6" style="width:100%; padding:8px; margin-bottom:1rem;" required></textarea><br>
-
-        <button type="submit" style="padding:10px 20px; background:#2d2d2d; color:#F4F1EA; border:none; cursor:pointer;">
-          Submit
-        </button>
-      </form>
-
-      <p style="font-size: 0.9rem; margin-top: 1rem;">
-        *Only relevant, research‑focused feedback will be considered.*
-      </p>
-    </div>
-  </section>
-
-  <footer>
-    © Rohit Verma | ORCID | OSF | Zenodo
-  </footer>
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      const isDark = document.body.classList.contains("dark-mode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+  </script>
 
 </body>
 </html>
