@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HVDC Evolution Diagram</title>
+  <title>HVDC Tidal Energy Transmission — Evolution</title>
 
   <style>
     :root {
@@ -49,39 +49,6 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    img {
-      width: 100%;
-      border-radius: 6px;
-      transition: transform 0.4s ease;
-      cursor: zoom-in;
-    }
-
-    img:hover {
-      transform: scale(1.03);
-    }
-
-    .stage-card {
-      background: #ffffff;
-      border: 1px solid #ccc;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 1.5rem;
-    }
-
-    /* Fade-in animation */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 0.9s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     /* Sidebar Navigation */
     #sidebar {
       position: fixed;
@@ -125,18 +92,13 @@
       color: #F4F1EA;
     }
 
-    .dark-mode .diagram-box,
-    .dark-mode .stage-card {
+    .dark-mode .diagram-box {
       background: #2a2a2a;
       border-color: #555;
     }
 
     .dark-mode a {
       color: #F4F1EA;
-    }
-
-    .dark-mode img {
-      filter: brightness(0.9) contrast(1.1);
     }
 
     .dark-mode #sidebar {
@@ -170,6 +132,20 @@
       border-radius: 4px;
       z-index: 1000;
     }
+
+    /* Fade-in animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.9s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 
@@ -192,38 +168,59 @@
     to the final polished engineering model (v4).
   </p>
 
-  <!-- Evolution Diagram -->
+  <!-- Embedded 3D Viewer -->
   <div id="diagram" class="diagram-box fade-in">
-    <h2>3D Evolution Diagram</h2>
-    <p style="text-align:center;">
-      Hover to zoom. This diagram illustrates the complete transformation across all four versions.
+    <h2>HVDC Tidal V4 — Interactive 3D Model</h2>
+    <p style="text-align:center; color:#777;">
+      Explore the enhanced 3D engineering model at 700 m operational depth.
     </p>
 
-    <img src="hvdc-evolution-diagram.png" alt="HVDC Evolution Diagram">
+    <div style="
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      border: 1px solid #555;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0,0,0,0.35);
+      background-color: #111;
+    ">
+      <iframe
+        src="hvdc_tidal_v4_3d.html"
+        width="100%"
+        height="650"
+        style="border: none;"
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <p style="text-align:center; color:#777; margin-top:12px;">
+      The 3D model demonstrates the integrated HVDC‑Tidal system with magnetic fins, turbines, and freight tubes.
+    </p>
   </div>
 
   <!-- Version Breakdown -->
   <h2 class="fade-in">Version Breakdown</h2>
 
-  <div id="v1" class="diagram-box stage-card fade-in">
+  <div id="v1" class="diagram-box fade-in">
     <h3>Version 1 — Feasibility Concept</h3>
     <p>Initial theoretical framework introducing HVDC for tidal systems.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></p>
   </div>
 
-  <div id="v2" class="diagram-box stage-card fade-in">
+  <div id="v2" class="diagram-box fade-in">
     <h3>Version 2 — Analytical Refinement</h3>
     <p>Expanded analytical modeling, refined assumptions, and improved parameter definitions.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></p>
   </div>
 
-  <div id="v3" class="diagram-box stage-card fade-in">
+  <div id="v3" class="diagram-box fade-in">
     <h3>Version 3 — Engineering Model</h3>
     <p>First full 3D engineering visualization showing turbines, subsea cable, and converter stations.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></p>
   </div>
 
-  <div id="v4" class="diagram-box stage-card fade-in">
+  <div id="v4" class="diagram-box fade-in">
     <h3>Version 4 — Final Polished Model</h3>
     <p>Consolidated refinements, corrected assumptions, and publication-ready engineering representation.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></p>
@@ -254,17 +251,7 @@
     const topBtn = document.getElementById("backToTop");
 
     window.addEventListener("scroll", () => {
-      if (window.scrollY > 300) {
-        topBtn.style.display = "block";
-      } else {
-        topBtn.style.display = "none";
-      }
+      topBtn.style.display = window.scrollY > 300 ? "block" : "none";
     });
 
-    topBtn.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  </script>
-
-</body>
-</html>
+    topBtn.addEventListener
