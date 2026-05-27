@@ -7,17 +7,26 @@
 
   <style>
     :root {
-      --color-bg-default: #F4F1EA;
-      --color-text-default: #2d2d2d;
+      --bg-light: #F4F1EA;
+      --text-light: #2d2d2d;
+      --bg-dark: #1e1e1e;
+      --text-dark: #F4F1EA;
+
+      --box-light: #ffffff;
+      --box-dark: #2a2a2a;
+
+      --border-light: #ccc;
+      --border-dark: #555;
     }
 
     body {
-      background-color: var(--color-bg-default);
-      color: var(--color-text-default);
+      background-color: var(--bg-light);
+      color: var(--text-light);
       font-family: 'Times New Roman', serif;
       margin: 0;
       padding: 2rem;
       line-height: 1.6;
+      transition: background 0.3s, color 0.3s;
     }
 
     h1, h2 {
@@ -26,7 +35,7 @@
 
     h2 {
       margin-top: 2rem;
-      border-bottom: 1px solid #2d2d2d;
+      border-bottom: 1px solid var(--text-light);
       padding-bottom: 0.3rem;
     }
 
@@ -39,14 +48,35 @@
       text-decoration: underline;
     }
 
-    .diagram-box {
-      background: #ffffff;
-      border: 1px solid #ccc;
+    /* Content Boxes */
+    .box {
+      background: var(--box-light);
+      border: 1px solid var(--border-light);
       padding: 1.5rem;
       border-radius: 8px;
       margin: 2rem auto;
       max-width: 1100px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    /* 3D Viewer Container */
+    .viewer-container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      background: #111;
+      box-shadow: 0 0 15px rgba(0,0,0,0.35);
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    iframe {
+      width: 100%;
+      height: 650px;
+      border: none;
     }
 
     /* Sidebar Navigation */
@@ -60,9 +90,10 @@
       background: rgba(255,255,255,0.8);
       padding: 1rem;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border-light);
       backdrop-filter: blur(6px);
       z-index: 999;
+      transition: background 0.3s, border 0.3s;
     }
 
     #sidebar a {
@@ -77,63 +108,61 @@
       right: 30px;
       padding: 10px 14px;
       background: #2d2d2d;
-      color: #F4F1EA;
+      color: var(--bg-light);
       border: none;
       border-radius: 6px;
       cursor: pointer;
       font-size: 1rem;
       display: none;
       z-index: 1000;
+      transition: background 0.3s;
     }
 
-    /* Dark mode */
+    /* Dark Mode */
     .dark-mode {
-      background-color: #1e1e1e;
-      color: #F4F1EA;
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
     }
 
-    .dark-mode .diagram-box {
-      background: #2a2a2a;
-      border-color: #555;
-    }
-
-    .dark-mode a {
-      color: #F4F1EA;
+    .dark-mode .box {
+      background: var(--box-dark);
+      border-color: var(--border-dark);
     }
 
     .dark-mode #sidebar {
       background: rgba(40,40,40,0.8);
-      border-color: #555;
+      border-color: var(--border-dark);
     }
 
     .dark-mode #sidebar a {
-      color: #F4F1EA;
+      color: var(--text-dark);
     }
 
     .dark-mode #backToTop {
       background: #444;
     }
 
-    /* Smooth scroll */
-    html {
-      scroll-behavior: smooth;
+    .dark-mode .viewer-container {
+      border-color: var(--border-dark);
+      box-shadow: 0 0 15px rgba(255,255,255,0.15);
     }
 
-    /* Toggle button */
+    /* Toggle Button */
     #themeToggle {
       position: fixed;
       top: 20px;
       right: 20px;
       padding: 8px 12px;
       background: #2d2d2d;
-      color: #F4F1EA;
+      color: var(--bg-light);
       border: none;
       cursor: pointer;
       border-radius: 4px;
       z-index: 1000;
+      transition: background 0.3s;
     }
 
-    /* Fade-in animation */
+    /* Fade-in Animation */
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
@@ -145,6 +174,10 @@
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
   </style>
 </head>
@@ -168,30 +201,13 @@
     to the final polished engineering model (v4).
   </p>
 
-  <!-- Embedded 3D Viewer -->
-  <div id="diagram" class="diagram-box fade-in">
+  <!-- 3D Viewer Section -->
+  <div id="diagram" class="box fade-in">
     <h2>HVDC Tidal V4 — Interactive 3D Model</h2>
-    <p style="text-align:center; color:#777;">
-      Explore the enhanced 3D engineering model at 700 m operational depth.
-    </p>
+    <p style="text-align:center; color:#777;">Explore the enhanced 3D engineering model at 700 m operational depth.</p>
 
-    <div style="
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      border: 1px solid #555;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(0,0,0,0.35);
-      background-color: #111;
-    ">
-      <iframe
-        src="hvdc_tidal_v4_3d.html"
-        width="100%"
-        height="650"
-        style="border: none;"
-        loading="lazy">
-      </iframe>
+    <div class="viewer-container">
+      <iframe src="hvdc_tidal_v4_3d.html" loading="lazy"></iframe>
     </div>
 
     <p style="text-align:center; color:#777; margin-top:12px;">
@@ -202,25 +218,25 @@
   <!-- Version Breakdown -->
   <h2 class="fade-in">Version Breakdown</h2>
 
-  <div id="v1" class="diagram-box fade-in">
+  <div id="v1" class="box fade-in">
     <h3>Version 1 — Feasibility Concept</h3>
     <p>Initial theoretical framework introducing HVDC for tidal systems.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></p>
   </div>
 
-  <div id="v2" class="diagram-box fade-in">
+  <div id="v2" class="box fade-in">
     <h3>Version 2 — Analytical Refinement</h3>
     <p>Expanded analytical modeling, refined assumptions, and improved parameter definitions.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></p>
   </div>
 
-  <div id="v3" class="diagram-box fade-in">
+  <div id="v3" class="box fade-in">
     <h3>Version 3 — Engineering Model</h3>
     <p>First full 3D engineering visualization showing turbines, subsea cable, and converter stations.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></p>
   </div>
 
-  <div id="v4" class="diagram-box fade-in">
+  <div id="v4" class="box fade-in">
     <h3>Version 4 — Final Polished Model</h3>
     <p>Consolidated refinements, corrected assumptions, and publication-ready engineering representation.</p>
     <p><strong>DOI:</strong> <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></p>
@@ -254,4 +270,10 @@
       topBtn.style.display = window.scrollY > 300 ? "block" : "none";
     });
 
-    topBtn.addEventListener
+    topBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+
+</body>
+</html>
