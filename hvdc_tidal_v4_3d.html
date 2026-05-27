@@ -1,0 +1,396 @@
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  #c{display:block;width:100%;height:100%}
+  #ui{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:4px;pointer-events:none}
+  .badge{background:rgba(0,0,0,.62);border:0.5px solid rgba(255,255,255,.14);border-radius:6px;padding:4px 9px;font-size:10px;color:#ddd8cc;font-family:sans-serif;letter-spacing:.2px;line-height:1.5}
+  .badge b{color:#7ecfff}
+  #legend{position:absolute;bottom:10px;left:10px;display:flex;flex-direction:column;gap:3px}
+  .leg{display:flex;align-items:center;gap:6px;font-size:9.5px;color:#8a847a;font-family:sans-serif}
+  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .sq{width:8px;height:8px;border-radius:1px;flex-shrink:0}
+  #ctrl{position:absolute;bottom:10px;right:10px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+  .btn{background:rgba(0,0,0,.62);border:0.5px solid rgba(255,255,255,.18);border-radius:6px;padding:5px 11px;font-size:10px;color:#ddd8cc;font-family:sans-serif;cursor:pointer;pointer-events:all;white-space:nowrap}
+  .btn:hover{background:rgba(255,255,255,.1)}
+  #tooltip{position:absolute;background:rgba(0,0,0,.82);border:0.5px solid rgba(255,255,255,.18);border-radius:7px;padding:7px 11px;font-size:10px;color:#ddd8cc;font-family:sans-serif;pointer-events:none;display:none;max-width:210px;line-height:1.6}
+  #title{position:absolute;top:10px;right:10px;text-align:right;font-family:sans-serif;pointer-events:none}
+  #title h2{margin:0;font-size:12px;font-weight:500;color:#7ecfff}
+  #title p{margin:1px 0 0;font-size:9px;color:#555;letter-spacing:.5px}
+  #version{position:absolute;top:36px;right:10px;font-family:sans-serif;font-size:9px;color:#444;pointer-events:none;text-align:right;line-height:1.7}
+</style>
+
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <div class="badge">Depth: <b>700 m</b> · HDSSKE zone · 70 atm hydrostatic</div>
+  <div class="badge">Cable: <b>0.2 m dia</b> · current-aligned non-linear routing</div>
+  <div class="badge">Turbines: <b>20 m dia</b> · 1.74 MW each (Pentland Firth)</div>
+  <div class="badge">MHD modules: <b>437 W each</b> · NdFeB 0.3 T · no moving parts</div>
+  <div class="badge">Meissner stabilisers: <b>YBCO 77 K</b> · 7.93 mT · 5 kW total cooling</div>
+  <div class="badge">Tether spacing: <b>500 m</b> · synthetic fibre mooring · gravity anchors</div>
+</div>
+
+<div id="title">
+  <h2>HVDC Tidal V4.0 — Verma, 2026</h2>
+</div>
+<div id="version">
+  V1 Current-aligned routing · V2 MHD hybrid · V3 Corrected MHD 437W<br>
+  V4 Meissner YBCO stabilisation · Five-layer AI architecture
+</div>
+
+<div id="legend">
+  <div class="leg"><div class="dot" style="background:#4aaff0"></div>HVDC neutrally buoyant cable (0.2 m dia)</div>
+  <div class="leg"><div class="dot" style="background:#f90"></div>Tidal turbines (20 m dia · 1.74 MW · 30D spacing)</div>
+  <div class="leg"><div class="dot" style="background:#e84040"></div>HVDC conductor core</div>
+  <div class="leg"><div class="dot" style="background:#22cc66"></div>NdFeB MHD electrode modules (437 W)</div>
+  <div class="leg"><div class="dot" style="background:#cc88ff"></div>Meissner YBCO superconductor stabilisers</div>
+  <div class="leg"><div class="dot" style="background:#fa8"></div>Syntactic foam buoyancy modules</div>
+  <div class="leg"><div class="sq" style="background:#88ccff"></div>Synthetic fibre tether cables</div>
+  <div class="leg"><div class="sq" style="background:#9a7040"></div>Gravity anchor blocks (seabed)</div>
+  <div class="leg"><div class="dot" style="background:rgba(80,180,255,.35)"></div>HDSSKE ocean current direction</div>
+</div>
+
+<div id="ctrl">
+  <button class="btn" id="btnCam">Stop rotation</button>
+  <button class="btn" id="btnTurb">Stop turbines</button>
+  <button class="btn" id="btnMHD">Hide MHD modules</button>
+  <button class="btn" id="btnSC">Hide Meissner stabilisers</button>
+  <button class="btn" id="btnBuoy">Hide buoyancy modules</button>
+  <button class="btn" id="btnCurrent">Hide current arrows</button>
+</div>
+
+<div id="tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const CW=()=>document.getElementById('c').parentElement.clientWidth||700;
+const CH=()=>document.getElementById('c').parentElement.clientHeight||520;
+
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(CW(),CH());
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x010912);
+scene.fog=new THREE.FogExp2(0x010912,0.013);
+
+const camera=new THREE.PerspectiveCamera(50,CW()/CH(),0.1,400);
+camera.position.set(0,12,36);
+camera.lookAt(0,0,0);
+
+scene.add(new THREE.AmbientLight(0x0d2040,1.5));
+const sun=new THREE.DirectionalLight(0x2060c0,1.1);sun.position.set(8,18,10);scene.add(sun);
+const rimA=new THREE.PointLight(0x0af4d8,0.6,55);scene.add(rimA);
+const rimB=new THREE.PointLight(0x3060a0,0.4,40);rimB.position.set(0,6,0);scene.add(rimB);
+
+// Water particles
+const wGeo=new THREE.BufferGeometry();
+const wN=1800,wP=new Float32Array(wN*3);
+for(let i=0;i<wN;i++){wP[i*3]=(Math.random()-.5)*100;wP[i*3+1]=(Math.random()-.5)*26;wP[i*3+2]=(Math.random()-.5)*24;}
+wGeo.setAttribute('position',new THREE.BufferAttribute(wP,3));
+scene.add(new THREE.Points(wGeo,new THREE.PointsMaterial({color:0x0a2040,size:0.065,transparent:true,opacity:0.5})));
+
+// Seabed
+const sbGeo=new THREE.PlaneGeometry(120,44,32,12);
+const sbP=sbGeo.attributes.position;
+for(let i=0;i<sbP.count;i++)sbP.setZ(i,(Math.random()-.5)*0.7);
+sbGeo.computeVertexNormals();
+const seabed=new THREE.Mesh(sbGeo,new THREE.MeshPhongMaterial({color:0x0b160b,shininess:2}));
+seabed.rotation.x=-Math.PI/2;seabed.position.y=-14;scene.add(seabed);
+for(let i=0;i<24;i++){
+  const h=Math.random()*1.0+0.2;
+  const r=new THREE.Mesh(new THREE.DodecahedronGeometry(h,0),new THREE.MeshPhongMaterial({color:0x101a10}));
+  r.position.set((Math.random()-.5)*80,h/2-14,(Math.random()-.5)*18);scene.add(r);
+}
+
+// ── MAIN HVDC CABLE (non-linear, slight curve — current-aligned routing) ──
+const CL=34; // half-length each side
+const cableCurve=new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-CL,0,0),
+  new THREE.Vector3(-CL*0.6,0,2.2),
+  new THREE.Vector3(-CL*0.2,0,0.8),
+  new THREE.Vector3(CL*0.2,0,-0.8),
+  new THREE.Vector3(CL*0.6,0,-2.2),
+  new THREE.Vector3(CL,0,0),
+]);
+
+const cableGeo=new THREE.TubeGeometry(cableCurve,120,0.1,10,false);
+const cableMesh=new THREE.Mesh(cableGeo,new THREE.MeshPhongMaterial({color:0x1a3a6a,emissive:0x060e1e,shininess:55}));
+cableMesh.userData={label:'Neutrally buoyant HVDC cable',desc:'0.2 m dia · current-aligned non-linear routing · syntactic foam modules at intervals · 70 atm rated · drag F=922.5 N/m at 3.0 m/s'};
+scene.add(cableMesh);
+
+// HVDC conductor accent (inner red stripe along curve)
+const condGeo=new THREE.TubeGeometry(cableCurve,120,0.035,6,false);
+const condMesh=new THREE.Mesh(condGeo,new THREE.MeshPhongMaterial({color:0xcc1a1a,emissive:0x200000}));
+condMesh.userData={label:'HVDC conductor',desc:'High-voltage DC conductor · 1000 A operating current · XLPE insulation · Lorentz force on Earth field = 0.050 N/m (0.005% of drag — negligible)'};
+scene.add(condMesh);
+
+// Shore terminals
+const termMat=new THREE.MeshPhongMaterial({color:0x1e3a60,emissive:0x06101e});
+[-CL,CL].forEach((xp,si)=>{
+  const t=new THREE.Mesh(new THREE.BoxGeometry(1.8,3.4,2.8),termMat);
+  const pt=cableCurve.getPoint(si===0?0:1);
+  t.position.set(pt.x,1.7,pt.z);
+  t.userData={label:'Onshore converter station',desc:'HVDC AC/DC converter · grid connection · ROV base port · depth-transition ramp (1–2° over 20–40 km)'};
+  scene.add(t);
+  const conv=new THREE.Mesh(new THREE.BoxGeometry(0.8,1.0,0.8),new THREE.MeshPhongMaterial({color:0x881818,emissive:0x1a0000}));
+  conv.position.set(pt.x+(si===0?-1.2:1.2),0.5,pt.z);
+  conv.userData={label:'HVDC converter box',desc:'Exports surplus power to national/regional grid · onshore AC converter'};
+  scene.add(conv);
+});
+
+// ── TURBINES at 30D spacing (600 m scaled to 30D = ~6 units apart) ──
+const turbineData=[];
+const turbineGroup=new THREE.Group();
+const tFracs=[0.18,0.36,0.5,0.64,0.82]; // positions along curve
+
+tFracs.forEach((frac,ti)=>{
+  const pt=cableCurve.getPoint(frac);
+  const side=(ti%2===0)?1:-1;
+
+  // Strut/bracket from cable
+  const strut=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,2.2,8),new THREE.MeshPhongMaterial({color:0x1a3050}));
+  strut.position.set(pt.x,side*1.1,pt.z);turbineGroup.add(strut);
+
+  // Nacelle
+  const nacelle=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.8,12),new THREE.MeshPhongMaterial({color:0x888,emissive:0x111}));
+  nacelle.rotation.z=Math.PI/2;
+  nacelle.position.set(pt.x,side*2.3,pt.z);
+  nacelle.userData={label:`Tidal turbine ${ti+1} (of 10–15 total)`,desc:`20 m dia · 1.74 MW at 3.0 m/s (Pentland Firth) · 30D spacing (600 m) · variable-pitch blades · bidirectional / yaw-capable · Cp=0.40 · Active RPM Governor`};
+  turbineGroup.add(nacelle);
+
+  // Hub
+  const hub=new THREE.Mesh(new THREE.SphereGeometry(0.18,10,7),new THREE.MeshPhongMaterial({color:0xcc7700,emissive:0x2a1500}));
+  hub.position.set(pt.x,side*2.3,pt.z);turbineGroup.add(hub);
+
+  // Blades
+  const bGroup=new THREE.Group();bGroup.position.set(pt.x,side*2.3,pt.z);
+  for(let b=0;b<3;b++){
+    const ang=(b/3)*Math.PI*2;
+    const blade=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.14,1.4,6),new THREE.MeshPhongMaterial({color:0xdd7700,emissive:0x1a0e00}));
+    blade.position.set(Math.sin(ang)*0.76,Math.cos(ang)*0.76,0);blade.rotation.z=-ang;
+    bGroup.add(blade);
+  }
+  turbineGroup.add(bGroup);
+  turbineData.push({bGroup,speed:(0.32+Math.random()*0.14)*side});
+});
+scene.add(turbineGroup);
+
+// ── MHD ELECTRODE MODULES (between turbines in wake recovery zone) ──
+const mhdGroup=new THREE.Group();
+const mhdFracs=[0.27,0.43,0.57,0.73];
+mhdFracs.forEach((frac,mi)=>{
+  const pt=cableCurve.getPoint(frac);
+  const side=(mi%2===0)?1:-1;
+  const box=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.22,0.28),new THREE.MeshPhongMaterial({color:0x22aa55,emissive:0x041a0a,shininess:40}));
+  box.position.set(pt.x,0.14,pt.z+side*0.15);
+  box.userData={label:`NdFeB MHD electrode module ${mi+1}`,desc:'437 W per module (V3.0 corrected from 60-90 kW) · NdFeB 0.3 T permanent magnet · σ=4.5 S/m seawater · P=σv²B²V · 20m×3m×2m active volume · wake recovery zone (25D–30D)'};
+  mhdGroup.add(box);
+  // Electrode plates
+  [-0.16,0.16].forEach(zo=>{
+    const plate=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.2,0.025),new THREE.MeshPhongMaterial({color:0x11882a,emissive:0x020e04}));
+    plate.position.set(pt.x,0.14,pt.z+side*0.15+zo);
+    mhdGroup.add(plate);
+  });
+});
+scene.add(mhdGroup);
+
+// ── MEISSNER YBCO SUPERCONDUCTOR STABILISERS ──
+const scGroup=new THREE.Group();
+const scFracs=[0.22,0.38,0.5,0.62,0.78];
+scFracs.forEach((frac,si)=>{
+  const pt=cableCurve.getPoint(frac);
+  // Cryostat housing
+  const cryo=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.14,0.28,12),new THREE.MeshPhongMaterial({color:0x8844cc,emissive:0x12004a,shininess:60}));
+  cryo.position.set(pt.x,-0.22,pt.z);
+  cryo.userData={label:`YBCO Meissner stabiliser ${si+1}`,desc:'YBa₂Cu₃O₇ HTS · Tc=93 K · 77 K operating (liquid N₂ or Stirling cryocooler) · vacuum-insulated cryostat · 70 atm rated · 100 W per unit · 5 kW total fleet (0.033% of output) · stabilises ±5 N/m buoyancy drift · B_required=7.93 mT'};
+  scGroup.add(cryo);
+  // NdFeB magnet array below (permanent magnet source for Meissner field)
+  const mag=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.11,0.08,10),new THREE.MeshPhongMaterial({color:0xcc88ff,emissive:0x220044}));
+  mag.position.set(pt.x,-0.42,pt.z);
+  scGroup.add(mag);
+  // Cryocooler power line
+  const lineGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(pt.x,0,pt.z),new THREE.Vector3(pt.x,-0.16,pt.z)]);
+  scGroup.add(new THREE.Line(lineGeo,new THREE.LineBasicMaterial({color:0x6622aa,transparent:true,opacity:0.6})));
+});
+scene.add(scGroup);
+
+// ── SYNTACTIC FOAM BUOYANCY MODULES ──
+const buoyGroup=new THREE.Group();
+const buoyFracs=[0.12,0.25,0.38,0.5,0.62,0.75,0.88];
+buoyFracs.forEach((frac,bi)=>{
+  const pt=cableCurve.getPoint(frac);
+  const foam=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.28,0.42),new THREE.MeshPhongMaterial({color:0xee8833,emissive:0x1a0800,shininess:25}));
+  foam.position.set(pt.x,0.22,pt.z);
+  foam.userData={label:'Syntactic foam buoyancy module',desc:'Hollow glass microspheres in epoxy matrix · rated to 70 atm · maintains neutral buoyancy at 700 m · seasonal density variation compensated by Meissner stabilisers (±5 N/m residual)'};
+  buoyGroup.add(foam);
+});
+scene.add(buoyGroup);
+
+// ── TETHER CABLES + GRAVITY ANCHORS ──
+const tetherGroup=new THREE.Group();
+const tetherFracs=[0.18,0.33,0.5,0.67,0.82];
+const SBY=-14;
+tetherFracs.forEach((frac,ti)=>{
+  const pt=cableCurve.getPoint(frac);
+  const CABLE_BOT=-0.1;
+  const pts=[];
+  for(let s=0;s<=20;s++){
+    const f=s/20;
+    const y=CABLE_BOT+f*(SBY-CABLE_BOT);
+    const droop=Math.sin(f*Math.PI)*0.4;
+    pts.push(new THREE.Vector3(pt.x+droop*0.12,y,pt.z+droop*0.07));
+  }
+  const tether=new THREE.Mesh(
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),28,0.028,6,false),
+    new THREE.MeshPhongMaterial({color:0x88bbee,emissive:0x001828})
+  );
+  tether.userData={label:`Synthetic fibre tether ${ti+1}`,desc:'High-tenacity polyester/nylon · near-neutral buoyancy in seawater · taut-mooring configuration · handles lateral drag 922.5 N/m · 50-m span × 46.1 kN per anchor point · 500 m spacing'};
+  tetherGroup.add(tether);
+
+  const anchor=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.6,1.4),new THREE.MeshPhongMaterial({color:0x7a5a28,emissive:0x0a0800}));
+  anchor.position.set(pt.x,SBY+0.3,pt.z);
+  anchor.userData={label:`Gravity anchor ${ti+1}`,desc:'Concrete/steel gravity anchor · no excavation required · seabed-placed · handles primary lateral load 922.5 N/m · Lorentz bias force from HVDC current = 0.050 N/m (0.005% — negligible but noted V4.0)'};
+  tetherGroup.add(anchor);
+
+  const plate=new THREE.Mesh(new THREE.BoxGeometry(1.9,0.07,1.9),new THREE.MeshPhongMaterial({color:0x5a3e18}));
+  plate.position.set(pt.x,SBY+0.035,pt.z);tetherGroup.add(plate);
+
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(0.11,0.022,7,14),new THREE.MeshPhongMaterial({color:0xaaddff}));
+  ring.position.set(pt.x,-0.12,pt.z);ring.rotation.x=Math.PI/2;tetherGroup.add(ring);
+});
+scene.add(tetherGroup);
+
+// ── OCEAN CURRENT ARROWS (current-aligned, same direction as cable) ──
+const currentGroup=new THREE.Group();
+for(let row=0;row<3;row++){
+  const zy=[-4,0,4][row];
+  const zz=[-5,0,5][row];
+  for(let seg=0;seg<5;seg++){
+    const fStart=0.06+seg*0.18;const fEnd=fStart+0.1;
+    const pA=cableCurve.getPoint(fStart);const pB=cableCurve.getPoint(fEnd);
+    const dir=new THREE.Vector3().subVectors(pB,pA).normalize();
+    const arr=new THREE.ArrowHelper(dir,new THREE.Vector3(pA.x,zy,pA.z+zz),2.8,0x1a4a9a,0.5,0.25);
+    arr.line.material.transparent=true;arr.line.material.opacity=0.18;
+    arr.cone.material.transparent=true;arr.cone.material.opacity=0.22;
+    currentGroup.add(arr);
+  }
+}
+scene.add(currentGroup);
+
+// ── FIVE-LAYER AI NODES (small pulsing indicators along cable) ──
+const aiNodes=[];
+[0.3,0.5,0.7].forEach((frac,ai)=>{
+  const pt=cableCurve.getPoint(frac);
+  const node=new THREE.Mesh(new THREE.SphereGeometry(0.09,8,6),new THREE.MeshPhongMaterial({color:0x00ddff,emissive:0x003344}));
+  node.position.set(pt.x,0.14,pt.z);
+  node.userData={label:'Five-layer AI control node',desc:'Layer 1: Attractor mapping (weekly) · Layer 2: Trajectory prediction (1–6 hr) · Layer 3: Yaw+buoyancy (10–60 s) · Layer 4: MHD conditioning (30 s) · Layer 5: YBCO cryostat monitoring (60 s) · D≈3.2 chaos dimension · λ=0.30/hr Lyapunov'};
+  scene.add(node);
+  aiNodes.push(node);
+});
+
+// ── DEPTH INDICATOR ──
+const depCanvas=document.createElement('canvas');
+depCanvas.width=56;depCanvas.height=280;
+const dCtx=depCanvas.getContext('2d');
+const grd=dCtx.createLinearGradient(0,0,0,280);
+grd.addColorStop(0,'rgba(120,200,255,0.55)');
+grd.addColorStop(0.45,'rgba(40,100,200,0.38)');
+grd.addColorStop(1,'rgba(8,20,40,0.18)');
+dCtx.fillStyle=grd;dCtx.fillRect(0,0,56,280);
+dCtx.fillStyle='rgba(140,210,255,0.85)';dCtx.font='bold 11px sans-serif';
+function rotLabel(ctx,text,x,y){ctx.save();ctx.translate(x,y);ctx.rotate(-Math.PI/2);ctx.fillText(text,0,0);ctx.restore();}
+rotLabel(dCtx,'0 m surface',28,270);
+rotLabel(dCtx,'700 m — HDSSKE zone',28,170);
+rotLabel(dCtx,'seabed',28,22);
+const depTex=new THREE.CanvasTexture(depCanvas);
+const depBar=new THREE.Mesh(new THREE.PlaneGeometry(0.7,16),new THREE.MeshBasicMaterial({map:depTex,transparent:true,depthWrite:false,side:THREE.DoubleSide}));
+depBar.position.set(-CL-5,0,0);depBar.rotation.y=Math.PI/2;scene.add(depBar);
+
+// ── CONTROLS ──
+let autoRot=true,turbinesOn=true,showMHD=true,showSC=true,showBuoy=true,showCurrent=true;
+let camAngle=0.15,camR=36,camY=12;
+let dragStart=null;
+const tip=document.getElementById('tooltip');
+const cvs=document.getElementById('c');
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
+
+const btnCam=document.getElementById('btnCam');
+const btnTurb=document.getElementById('btnTurb');
+const btnMHD=document.getElementById('btnMHD');
+const btnSC=document.getElementById('btnSC');
+const btnBuoy=document.getElementById('btnBuoy');
+const btnCurrent=document.getElementById('btnCurrent');
+
+btnCam.onclick=()=>{autoRot=!autoRot;btnCam.textContent=autoRot?'Stop rotation':'Rotate view'};
+btnTurb.onclick=()=>{turbinesOn=!turbinesOn;btnTurb.textContent=turbinesOn?'Stop turbines':'Start turbines'};
+btnMHD.onclick=()=>{showMHD=!showMHD;mhdGroup.visible=showMHD;btnMHD.textContent=showMHD?'Hide MHD modules':'Show MHD modules'};
+btnSC.onclick=()=>{showSC=!showSC;scGroup.visible=showSC;btnSC.textContent=showSC?'Hide Meissner stabilisers':'Show Meissner stabilisers'};
+btnBuoy.onclick=()=>{showBuoy=!showBuoy;buoyGroup.visible=showBuoy;btnBuoy.textContent=showBuoy?'Hide buoyancy modules':'Show buoyancy modules'};
+btnCurrent.onclick=()=>{showCurrent=!showCurrent;currentGroup.visible=showCurrent;btnCurrent.textContent=showCurrent?'Hide current arrows':'Show current arrows'};
+
+cvs.addEventListener('mousedown',e=>{dragStart={x:e.clientX,a:camAngle,y:e.clientY,ry:camY};});
+window.addEventListener('mousemove',e=>{
+  if(dragStart){camAngle=dragStart.a+(e.clientX-dragStart.x)*0.007;camY=Math.max(-5,Math.min(24,dragStart.ry-(e.clientY-dragStart.y)*0.06));}
+  const r=cvs.getBoundingClientRect();
+  mouse.x=((e.clientX-r.left)/r.width)*2-1;
+  mouse.y=-((e.clientY-r.top)/r.height)*2+1;
+  raycaster.setFromCamera(mouse,camera);
+  const meshes=[];scene.traverse(o=>{if(o.isMesh&&o.userData&&o.userData.label)meshes.push(o);});
+  const hits=raycaster.intersectObjects(meshes);
+  if(hits.length){
+    const h=hits[0].object;
+    tip.style.display='block';
+    tip.style.left=(e.clientX-r.left+14)+'px';
+    tip.style.top=(e.clientY-r.top-10)+'px';
+    tip.innerHTML=`<b style="color:#7ecfff">${h.userData.label}</b><br>${h.userData.desc}`;
+  } else tip.style.display='none';
+});
+window.addEventListener('mouseup',()=>dragStart=null);
+cvs.addEventListener('wheel',e=>{camR=Math.max(8,Math.min(75,camR+e.deltaY*0.04));});
+
+cvs.addEventListener('touchstart',e=>{const t=e.touches[0];dragStart={x:t.clientX,a:camAngle,y:t.clientY,ry:camY};});
+cvs.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0];if(dragStart){camAngle=dragStart.a+(t.clientX-dragStart.x)*0.007;camY=Math.max(-5,Math.min(24,dragStart.ry-(t.clientY-dragStart.y)*0.06));}},{passive:false});
+cvs.addEventListener('touchend',()=>dragStart=null);
+
+// ── ANIMATION ──
+let T=0;
+function animate(){
+  requestAnimationFrame(animate);
+  T+=0.016;
+  if(autoRot)camAngle+=0.0022;
+  camera.position.set(Math.sin(camAngle)*camR,camY,Math.cos(camAngle)*camR);
+  camera.lookAt(0,0,0);
+
+  if(turbinesOn)turbineData.forEach(({bGroup,speed})=>{bGroup.rotation.x+=speed*0.038;});
+
+  // Pulse AI nodes
+  aiNodes.forEach((n,i)=>{
+    const s=0.88+Math.sin(T*2.2+i*2.1)*0.14;
+    n.scale.setScalar(s);
+    n.material.emissiveIntensity=0.3+Math.sin(T*2.2+i*2.1)*0.25;
+  });
+
+  // Pulse MHD modules subtly
+  mhdGroup.children.forEach((o,i)=>{
+    if(o.isMesh&&o.userData.label) o.material.emissiveIntensity=0.08+Math.sin(T*1.4+i*0.7)*0.06;
+  });
+
+  // Pulse Meissner
+  scGroup.children.forEach((o,i)=>{
+    if(o.isMesh&&o.userData.label) o.material.emissiveIntensity=0.12+Math.sin(T*0.9+i*1.3)*0.09;
+  });
+
+  rimA.position.set(Math.sin(T*0.22)*16,5,Math.cos(T*0.22)*9);
+
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  renderer.setSize(CW(),CH());
+  camera.aspect=CW()/CH();
+  camera.updateProjectionMatrix();
+});
+</script>
