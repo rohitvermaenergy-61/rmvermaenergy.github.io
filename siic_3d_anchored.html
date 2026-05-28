@@ -1,0 +1,496 @@
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  #c{display:block;width:100%;height:100%}
+  #ui{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+  .badge{background:rgba(0,0,0,.6);border:0.5px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 9px;font-size:10.5px;color:#e0dbd0;font-family:sans-serif;letter-spacing:.2px}
+  .badge b{color:#7ecfff}
+  #legend{position:absolute;bottom:10px;left:10px;display:flex;flex-direction:column;gap:3px}
+  .leg{display:flex;align-items:center;gap:6px;font-size:10px;color:#9a948a;font-family:sans-serif}
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .sq{width:9px;height:9px;flex-shrink:0;border-radius:2px}
+  #ctrl{position:absolute;bottom:10px;right:10px;display:flex;gap:6px}
+  .btn{background:rgba(0,0,0,.6);border:0.5px solid rgba(255,255,255,.2);border-radius:6px;padding:5px 11px;font-size:10.5px;color:#e0dbd0;font-family:sans-serif;cursor:pointer;pointer-events:all}
+  .btn:hover{background:rgba(255,255,255,.1)}
+  #tooltip{position:absolute;background:rgba(0,0,0,.8);border:0.5px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 10px;font-size:10.5px;color:#e0dbd0;font-family:sans-serif;pointer-events:none;display:none;max-width:200px;line-height:1.55}
+  #title{position:absolute;top:10px;right:10px;text-align:right;font-family:sans-serif;color:#e0dbd0;pointer-events:none}
+  #title h2{margin:0;font-size:13px;font-weight:500;color:#7ecfff}
+  #title p{margin:2px 0 0;font-size:9.5px;color:#666;letter-spacing:.5px}
+  #depth{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;font-family:sans-serif;font-size:10px;color:rgba(100,180,255,.25);writing-mode:vertical-rl;letter-spacing:2px}
+</style>
+
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <div class="badge">Depth: <b>500–700 m</b> · HDSSKE zone</div>
+  <div class="badge">Tunnel: <b>2.0 m dia</b> · 30.6 mm steel wall · neutral buoyancy design</div>
+  <div class="badge">Anchor spacing: <b>every 500 m</b> · current-aligned routing</div>
+  <div class="badge">Tidal output: <b>51.5 MW</b> · Freight: <b>180,000 t/day</b></div>
+</div>
+
+<div id="title">
+  <h2>SIIC V1.1 — Verma, 2026</h2>
+  <p>SUBSEA INTEGRATED INFRASTRUCTURE CORRIDOR</p>
+</div>
+
+<div id="legend">
+  <div class="leg"><div class="dot" style="background:#4af"></div>Neutrally buoyant pneumatic tunnel</div>
+  <div class="leg"><div class="dot" style="background:#f90"></div>Tidal turbines (5 m dia · 32.2 kW)</div>
+  <div class="leg"><div class="dot" style="background:#f44"></div>HVDC cables (exterior-mounted)</div>
+  <div class="leg"><div class="dot" style="background:#4f8"></div>Freight containers (1.8 m · 5 t · 36 km/h)</div>
+  <div class="leg"><div class="dot" style="background:#c8f"></div>NdFeB MHD fins (blade tips · 2.43 W/turbine)</div>
+  <div class="leg"><div class="dot" style="background:#fa8"></div>FBG acoustic sensor nodes</div>
+  <div class="leg"><div class="sq" style="background:#8cf"></div>Vertical tether cables (to seabed anchors)</div>
+  <div class="leg"><div class="sq" style="background:#a85"></div>Seabed anchor blocks (gravity anchors)</div>
+  <div class="leg"><div class="dot" style="background:rgba(80,200,255,.5)"></div>Current-aligned flow (HDSSKE)</div>
+</div>
+
+<div id="ctrl">
+  <button class="btn" id="btnCam">Stop rotation</button>
+  <button class="btn" id="btnFlow">Hide freight</button>
+  <button class="btn" id="btnTurb">Stop turbines</button>
+  <button class="btn" id="btnBuoy">Hide buoyancy</button>
+</div>
+
+<div id="tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const CW=()=>document.getElementById('c').parentElement.clientWidth||680;
+const CH=()=>document.getElementById('c').parentElement.clientHeight||500;
+
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(CW(),CH());
+renderer.shadowMap.enabled=true;
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x010810);
+scene.fog=new THREE.FogExp2(0x010810,0.015);
+
+const camera=new THREE.PerspectiveCamera(52,CW()/CH(),0.1,400);
+camera.position.set(0,10,32);
+camera.lookAt(0,0,0);
+
+// Lighting
+scene.add(new THREE.AmbientLight(0x102040,1.4));
+const sun=new THREE.DirectionalLight(0x2a70c8,1.1);
+sun.position.set(6,15,8);scene.add(sun);
+const rimL=new THREE.PointLight(0x0af4d8,0.7,50);
+rimL.position.set(-10,4,0);scene.add(rimL);
+const glow=new THREE.PointLight(0x003366,0.5,30);
+glow.position.set(0,5,0);scene.add(glow);
+
+// Water particles
+const wGeo=new THREE.BufferGeometry();
+const wN=1600,wPos=new Float32Array(wN*3);
+for(let i=0;i<wN;i++){wPos[i*3]=(Math.random()-.5)*90;wPos[i*3+1]=(Math.random()-.5)*24;wPos[i*3+2]=(Math.random()-.5)*22;}
+wGeo.setAttribute('position',new THREE.BufferAttribute(wPos,3));
+scene.add(new THREE.Points(wGeo,new THREE.PointsMaterial({color:0x0a2a4a,size:0.07,transparent:true,opacity:0.55})));
+
+// ── SEABED ──────────────────────────────────────────────────────────────
+const seabedGeo=new THREE.PlaneGeometry(110,40,30,10);
+const sbPos=seabedGeo.attributes.position;
+for(let i=0;i<sbPos.count;i++) sbPos.setZ(i,(Math.random()-.5)*0.6);
+seabedGeo.computeVertexNormals();
+const seabed=new THREE.Mesh(seabedGeo,new THREE.MeshPhongMaterial({color:0x0d1a0d,shininess:3}));
+seabed.rotation.x=-Math.PI/2;
+seabed.position.y=-13;
+scene.add(seabed);
+
+// Rocks
+for(let i=0;i<22;i++){
+  const h=Math.random()*0.9+0.2;
+  const r=new THREE.Mesh(new THREE.DodecahedronGeometry(h,0),new THREE.MeshPhongMaterial({color:0x141e14}));
+  r.position.set((Math.random()-.5)*70,h/2-13,(Math.random()-.5)*16);
+  scene.add(r);
+}
+
+// ── MAIN TUNNEL ──────────────────────────────────────────────────────────
+const TL=32;
+const tunnelMesh=new THREE.Mesh(
+  new THREE.CylinderGeometry(0.62,0.62,TL,32,1,false),
+  new THREE.MeshPhongMaterial({color:0x1e4a7a,emissive:0x081422,shininess:70,transparent:true,opacity:0.9})
+);
+tunnelMesh.rotation.z=Math.PI/2;
+tunnelMesh.userData={label:'Neutrally buoyant pneumatic tunnel',desc:'2.0 m dia · 30.6 mm high-strength steel wall · 70 atm rated · pressurised air interior + steel mass = net-zero buoyancy at 500–700 m depth'};
+scene.add(tunnelMesh);
+
+// Tunnel wireframe accent
+const twire=new THREE.Mesh(
+  new THREE.CylinderGeometry(0.62,0.62,TL,32,1,false),
+  new THREE.MeshBasicMaterial({color:0x4af0ff,wireframe:true,transparent:true,opacity:0.06})
+);
+twire.rotation.z=Math.PI/2;scene.add(twire);
+
+// End caps
+[-TL/2,TL/2].forEach(xp=>{
+  const cap=new THREE.Mesh(new THREE.CircleGeometry(0.62,24),new THREE.MeshPhongMaterial({color:0x1e4a7a,emissive:0x081422}));
+  cap.rotation.y=Math.PI/2;cap.position.x=xp;scene.add(cap);
+});
+
+// ── HVDC CABLES ──────────────────────────────────────────────────────────
+function makeCable(yOff,zOff,col,label,desc){
+  const pts=[];
+  for(let i=0;i<=50;i++){
+    const x=(i/50)*TL-TL/2;
+    pts.push(new THREE.Vector3(x,yOff+Math.sin(i*0.5)*0.03,zOff));
+  }
+  const m=new THREE.Mesh(
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),80,0.028,6,false),
+    new THREE.MeshPhongMaterial({color:col,emissive:col,emissiveIntensity:0.25})
+  );
+  m.userData={label,desc};return m;
+}
+scene.add(makeCable(0.18,0.64,0xcc2222,'HVDC cable (positive)','High-voltage DC · attached to tunnel exterior · exports 50.8 MW surplus tidal power to shore grid'));
+scene.add(makeCable(-0.18,0.64,0xcc2222,'HVDC cable (negative)','HVDC return conductor · exterior-mounted alongside positive cable'));
+
+// ── TURBINES ──────────────────────────────────────────────────────────────
+const turbineData=[];
+const turbineGroup=new THREE.Group();
+const txPos=[-13,-6.5,0,6.5,13];
+
+txPos.forEach((xp,ti)=>{
+  const side=ti%2===0?1:-1;
+  const bktH=1.5;
+
+  // Bracket
+  const bkt=new THREE.Mesh(new THREE.BoxGeometry(0.09,bktH,0.09),new THREE.MeshPhongMaterial({color:0x1e3a5a}));
+  bkt.position.set(xp,side*(0.62+bktH/2),0);turbineGroup.add(bkt);
+
+  // Hub
+  const hub=new THREE.Mesh(new THREE.SphereGeometry(0.16,12,8),new THREE.MeshPhongMaterial({color:0xbb6600,emissive:0x2a1400}));
+  hub.position.set(xp,side*(0.62+bktH+0.16),0);
+  hub.userData={label:`Tidal turbine ${ti+1} of 1600`,desc:'5 m dia · 32.2 kW at 2.0 m/s current · Active RPM Governor · variable-pitch blades · Forbidden Band Registry prevents structural resonance'};
+  turbineGroup.add(hub);
+
+  const bladeGroup=new THREE.Group();
+  bladeGroup.position.copy(hub.position);
+
+  for(let b=0;b<3;b++){
+    const ang=(b/3)*Math.PI*2;
+    const blade=new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045,0.095,1.1,6),
+      new THREE.MeshPhongMaterial({color:0xdd7700,emissive:0x1a0e00,shininess:45})
+    );
+    blade.position.set(Math.sin(ang)*0.58,Math.cos(ang)*0.58,0);
+    blade.rotation.z=-ang;
+
+    // NdFeB MHD fin at blade tip
+    const fin=new THREE.Mesh(
+      new THREE.BoxGeometry(0.2,0.075,0.045),
+      new THREE.MeshPhongMaterial({color:0xcc88ff,emissive:0x220044,shininess:60})
+    );
+    fin.position.set(Math.sin(ang)*1.09,Math.cos(ang)*1.09,0);
+    fin.userData={label:'NdFeB MHD fin array',desc:'Neodymium-iron-boron blade-tip electrode · 2.43 W per turbine · 3.9 kW fleet total · dual purpose: structural blade-tip reinforcement + MHD generation'};
+    bladeGroup.add(fin);
+    bladeGroup.add(blade);
+  }
+  turbineGroup.add(bladeGroup);
+  turbineData.push({bladeGroup,speed:(0.38+Math.random()*0.18)*side});
+});
+
+// FBG sensor nodes
+txPos.forEach((xp,ti)=>{
+  if(ti%2===0){
+    const s=new THREE.Mesh(new THREE.SphereGeometry(0.1,8,6),new THREE.MeshPhongMaterial({color:0xff9933,emissive:0x331500}));
+    s.position.set(xp,0.72,0);
+    s.userData={label:'FBG acoustic sensor node',desc:'Fiber Optic Bragg Grating · continuous strain + micro-fissure monitoring · cetacean acoustic detection · 20 km spacing · feeds Active RPM Governor Quiet Mode'};
+    turbineGroup.add(s);
+  }
+});
+
+scene.add(turbineGroup);
+
+// ── TETHER + ANCHOR SYSTEM ──────────────────────────────────────────────
+const tetherGroup=new THREE.Group();
+const anchorPositions=[-12,-6,0,6,12];
+const SEABED_Y=-13;
+const TUNNEL_BOTTOM=-0.62;
+const TETHER_LENGTH=Math.abs(SEABED_Y-TUNNEL_BOTTOM);
+
+anchorPositions.forEach((xp,ai)=>{
+  // Tether cable (vertical, slight catenary droop)
+  const tPts=[];
+  const segments=20;
+  for(let s=0;s<=segments;s++){
+    const frac=s/segments;
+    const y=TUNNEL_BOTTOM+frac*(SEABED_Y-TUNNEL_BOTTOM);
+    const droop=Math.sin(frac*Math.PI)*0.3; // slight catenary bow
+    tPts.push(new THREE.Vector3(xp+droop*0.15,y,droop*0.08));
+  }
+  const tether=new THREE.Mesh(
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(tPts),30,0.035,6,false),
+    new THREE.MeshPhongMaterial({color:0x88ccff,emissive:0x001a33,shininess:40})
+  );
+  tether.userData={label:`Vertical tether cable ${ai+1}`,desc:'High-tensile mooring cable · anchors neutrally buoyant tunnel against lateral current drift · slight catenary profile under current load · spaced every ~500 m along deployment'};
+  tetherGroup.add(tether);
+
+  // Anchor block on seabed
+  const anchor=new THREE.Mesh(
+    new THREE.BoxGeometry(1.2,0.55,1.2),
+    new THREE.MeshPhongMaterial({color:0x7a6030,emissive:0x0a0800,shininess:8})
+  );
+  anchor.position.set(xp,SEABED_Y+0.275,0);
+  anchor.userData={label:`Gravity anchor block ${ai+1}`,desc:'Concrete/steel gravity anchor · holds tether at seabed · current-aligned placement · no excavation required — placed on seabed surface · accounts for HDSSKE lateral load from thermohaline currents'};
+  tetherGroup.add(anchor);
+
+  // Anchor base plate
+  const plate=new THREE.Mesh(
+    new THREE.BoxGeometry(1.6,0.08,1.6),
+    new THREE.MeshPhongMaterial({color:0x5a4820,emissive:0x080600})
+  );
+  plate.position.set(xp,SEABED_Y+0.04,0);
+  tetherGroup.add(plate);
+
+  // Tether attachment ring at tunnel bottom
+  const ring=new THREE.Mesh(
+    new THREE.TorusGeometry(0.12,0.025,8,16),
+    new THREE.MeshPhongMaterial({color:0xaaddff,emissive:0x002244})
+  );
+  ring.position.set(xp,TUNNEL_BOTTOM-0.04,0);
+  ring.rotation.x=Math.PI/2;
+  tetherGroup.add(ring);
+});
+
+scene.add(tetherGroup);
+
+// ── BUOYANCY FORCE ARROWS ──────────────────────────────────────────────
+const buoyGroup=new THREE.Group();
+
+function makeArrowUp(xp,len,col){
+  const dir=new THREE.Vector3(0,1,0);
+  const origin=new THREE.Vector3(xp,-0.62-0.2,0);
+  const arrow=new THREE.ArrowHelper(dir,origin,len,col,0.25,0.15);
+  return arrow;
+}
+
+// Buoyancy up-arrows along tunnel (upward lift from neutral buoyancy design)
+[-10,-4,2,8].forEach(xp=>{
+  const arr=makeArrowUp(xp,1.8,0x33aaff);
+  arr.userData={label:'Neutral buoyancy force',desc:'Upward buoyant force = downward weight of steel + pressurised contents · net-zero at 500–700 m operating depth · pressurised air interior (1.5 atm above ambient) reduces mean tunnel density to match seawater'};
+  buoyGroup.add(arr);
+});
+
+// Gravity/weight arrows (downward, shorter — net force is zero)
+[-10,-4,2,8].forEach(xp=>{
+  const arr=new THREE.ArrowHelper(
+    new THREE.Vector3(0,-1,0),
+    new THREE.Vector3(xp,0.62+0.2,0),
+    1.8,0x2244aa,0.25,0.15
+  );
+  buoyGroup.add(arr);
+});
+
+// Label plane for buoyancy
+const canvas2d=document.createElement('canvas');
+canvas2d.width=256;canvas2d.height=64;
+const ctx=canvas2d.getContext('2d');
+ctx.fillStyle='rgba(51,170,255,0.85)';
+ctx.font='bold 18px sans-serif';
+ctx.fillText('↑ Buoyancy = Weight ↓',8,40);
+const tex=new THREE.CanvasTexture(canvas2d);
+const labelMesh=new THREE.Mesh(
+  new THREE.PlaneGeometry(4,1),
+  new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false})
+);
+labelMesh.position.set(-8,2.8,0);
+buoyGroup.add(labelMesh);
+
+scene.add(buoyGroup);
+
+// ── CURRENT FLOW ARROWS ──────────────────────────────────────────────────
+const currentGroup=new THREE.Group();
+const currentY=[-3,0,3];
+const currentZ=[-5,0,5];
+currentY.forEach(cy=>{
+  currentZ.forEach(cz=>{
+    const pts=[new THREE.Vector3(-TL/2,cy,cz),new THREE.Vector3(TL/2,cy,cz)];
+    const cur=new THREE.Mesh(
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),10,0.022,4,false),
+      new THREE.MeshBasicMaterial({color:0x1a4a7a,transparent:true,opacity:0.25})
+    );
+    currentGroup.add(cur);
+    // Arrowhead at end
+    const arr=new THREE.ArrowHelper(
+      new THREE.Vector3(1,0,0),
+      new THREE.Vector3(TL/2-1,cy,cz),
+      2,0x2255aa,0.3,0.18
+    );
+    arr.line.material.transparent=true;arr.line.material.opacity=0.0;
+    arr.cone.material.transparent=true;arr.cone.material.opacity=0.3;
+    currentGroup.add(arr);
+  });
+});
+
+// Current label
+const cCanvas=document.createElement('canvas');
+cCanvas.width=320;cCanvas.height=56;
+const cCtx=cCanvas.getContext('2d');
+cCtx.fillStyle='rgba(40,100,200,0.8)';
+cCtx.font='13px sans-serif';
+cCtx.fillText('→ HDSSKE current (e.g. Indonesian Throughflow 1.5–3.5 m/s)',4,34);
+const cTex=new THREE.CanvasTexture(cCanvas);
+const cLabel=new THREE.Mesh(
+  new THREE.PlaneGeometry(6,1),
+  new THREE.MeshBasicMaterial({map:cTex,transparent:true,depthWrite:false})
+);
+cLabel.position.set(0,-4.5,6);
+currentGroup.add(cLabel);
+scene.add(currentGroup);
+
+// ── FREIGHT CONTAINERS ────────────────────────────────────────────────────
+const containers=[];
+for(let i=0;i<5;i++){
+  const c=new THREE.Mesh(
+    new THREE.CylinderGeometry(0.35,0.35,1.4,12),
+    new THREE.MeshPhongMaterial({color:0x22bb55,emissive:0x041a0a,shininess:50,transparent:true,opacity:0.92})
+  );
+  c.rotation.z=Math.PI/2;
+  c.position.set(-TL/2+i*5.8+1,-0.04,0);
+  c.userData={label:`Freight container ${i+1}`,desc:'1.8 m dia · 6.0 m length · 5 t max load · aluminium alloy 5083 · 36 km/h at 1.5 atm differential · 0.0025 kWh/t·km — 6× more efficient than surface shipping'};
+  containers.push({mesh:c,offset:i});
+  scene.add(c);
+}
+
+// ── SHORE TERMINALS ───────────────────────────────────────────────────────
+[-TL/2,TL/2].forEach((xp,si)=>{
+  const t=new THREE.Mesh(
+    new THREE.BoxGeometry(1.6,3.2,2.6),
+    new THREE.MeshPhongMaterial({color:0x2a4a7a,emissive:0x080f1a})
+  );
+  t.position.set(xp,1.6,0);
+  t.userData={label:'Shore terminal',desc:'Pressure lock airlock · automated container handling · HVDC grid converter · depth-transition ramp (1–2° over 20–40 km to 700 m depth) · ROV access ports every 50 km'};
+  scene.add(t);
+
+  // Depth ramp
+  const ramp=new THREE.Mesh(new THREE.BoxGeometry(4,0.12,1.4),new THREE.MeshPhongMaterial({color:0x1a3a5a}));
+  ramp.position.set(xp+(si===0?-3:3),0.5,0);
+  ramp.rotation.z=(si===0?0.15:-0.15);
+  scene.add(ramp);
+
+  // HVDC converter box
+  const conv=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.9,0.7),new THREE.MeshPhongMaterial({color:0x882222,emissive:0x1a0000}));
+  conv.position.set(xp+(si===0?-0.9:0.9),0.45,1.0);
+  conv.userData={label:'HVDC converter station',desc:'Onshore grid converter · exports 50.8 MW surplus tidal generation · $1.5 M/km cable + converter cost'};
+  scene.add(conv);
+});
+
+// ── DEPTH INDICATOR ───────────────────────────────────────────────────────
+const depthCanvas=document.createElement('canvas');
+depthCanvas.width=64;depthCanvas.height=256;
+const dCtx=depthCanvas.getContext('2d');
+const grad=dCtx.createLinearGradient(0,0,0,256);
+grad.addColorStop(0,'rgba(100,200,255,0.6)');
+grad.addColorStop(0.5,'rgba(40,100,200,0.4)');
+grad.addColorStop(1,'rgba(10,30,60,0.2)');
+dCtx.fillStyle=grad;dCtx.fillRect(0,0,64,256);
+dCtx.fillStyle='rgba(150,210,255,0.9)';
+dCtx.font='bold 12px sans-serif';
+dCtx.save();dCtx.translate(32,250);dCtx.rotate(-Math.PI/2);
+dCtx.fillText('0 m surface',0,0);dCtx.restore();
+dCtx.save();dCtx.translate(32,140);dCtx.rotate(-Math.PI/2);
+dCtx.fillText('500–700 m',0,0);dCtx.restore();
+dCtx.save();dCtx.translate(32,20);dCtx.rotate(-Math.PI/2);
+dCtx.fillText('seabed',0,0);dCtx.restore();
+const depthTex=new THREE.CanvasTexture(depthCanvas);
+const depthBar=new THREE.Mesh(
+  new THREE.PlaneGeometry(0.8,14),
+  new THREE.MeshBasicMaterial({map:depthTex,transparent:true,depthWrite:false,side:THREE.DoubleSide})
+);
+depthBar.position.set(-TL/2-5,0,0);
+depthBar.rotation.y=Math.PI/2;
+scene.add(depthBar);
+
+// ── STATE & CONTROLS ─────────────────────────────────────────────────────
+let autoRot=true,turbinesOn=true,showFlow=true,showBuoy=true;
+let camAngle=0.2,camR=32,camY=10;
+let dragStart=null;
+const tip=document.getElementById('tooltip');
+const cvs=document.getElementById('c');
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
+
+document.getElementById('btnCam').onclick=()=>{autoRot=!autoRot;document.getElementById('btnCam').textContent=autoRot?'Stop rotation':'Rotate view'};
+document.getElementById('btnFlow').onclick=()=>{showFlow=!showFlow;containers.forEach(c=>c.mesh.visible=showFlow);document.getElementById('btnFlow').textContent=showFlow?'Hide freight':'Show freight'};
+document.getElementById('btnTurb').onclick=()=>{turbinesOn=!turbinesOn;document.getElementById('btnTurb').textContent=turbinesOn?'Stop turbines':'Start turbines'};
+document.getElementById('btnBuoy').onclick=()=>{showBuoy=!showBuoy;buoyGroup.visible=showBuoy;document.getElementById('btnBuoy').textContent=showBuoy?'Hide buoyancy':'Show buoyancy'};
+
+cvs.addEventListener('mousedown',e=>{dragStart={x:e.clientX,a:camAngle,y:e.clientY,ry:camY};});
+window.addEventListener('mousemove',e=>{
+  if(dragStart){camAngle=dragStart.a+(e.clientX-dragStart.x)*0.007;camY=Math.max(-4,Math.min(22,dragStart.ry-(e.clientY-dragStart.y)*0.06));}
+  const r=cvs.getBoundingClientRect();
+  mouse.x=((e.clientX-r.left)/r.width)*2-1;
+  mouse.y=-((e.clientY-r.top)/r.height)*2+1;
+  raycaster.setFromCamera(mouse,camera);
+  const meshes=[];
+  scene.traverse(o=>{if(o.isMesh&&o.userData&&o.userData.label)meshes.push(o);});
+  const hits=raycaster.intersectObjects(meshes);
+  if(hits.length){
+    const h=hits[0].object;
+    tip.style.display='block';
+    tip.style.left=(e.clientX-r.left+14)+'px';
+    tip.style.top=(e.clientY-r.top-10)+'px';
+    tip.innerHTML=`<b style="color:#7ecfff">${h.userData.label}</b><br>${h.userData.desc}`;
+  } else {tip.style.display='none';}
+});
+window.addEventListener('mouseup',()=>dragStart=null);
+cvs.addEventListener('wheel',e=>{camR=Math.max(8,Math.min(70,camR+e.deltaY*0.04));});
+
+// Touch support
+cvs.addEventListener('touchstart',e=>{const t=e.touches[0];dragStart={x:t.clientX,a:camAngle,y:t.clientY,ry:camY};});
+cvs.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0];if(dragStart){camAngle=dragStart.a+(t.clientX-dragStart.x)*0.007;camY=Math.max(-4,Math.min(22,dragStart.ry-(t.clientY-dragStart.y)*0.06));}},{passive:false});
+cvs.addEventListener('touchend',()=>dragStart=null);
+
+// ── ANIMATION LOOP ────────────────────────────────────────────────────────
+let T=0;
+function animate(){
+  requestAnimationFrame(animate);
+  T+=0.016;
+  if(autoRot) camAngle+=0.0025;
+  camera.position.set(Math.sin(camAngle)*camR,camY,Math.cos(camAngle)*camR);
+  camera.lookAt(0,0,0);
+
+  if(turbinesOn) turbineData.forEach(({bladeGroup,speed})=>{bladeGroup.rotation.x+=speed*0.042;});
+
+  if(showFlow){
+    containers.forEach(({mesh},i)=>{
+      mesh.position.x+=0.05;
+      if(mesh.position.x>TL/2-0.9) mesh.position.x=-TL/2+0.9;
+      mesh.position.y=-0.04+Math.sin(T*0.6+i)*0.007;
+    });
+  }
+
+  // Animate current particles (subtle wave in current arrows)
+  currentGroup.children.forEach((obj,i)=>{
+    if(obj.isMesh) obj.material.opacity=0.15+Math.sin(T*0.8+i*0.5)*0.08;
+  });
+
+  // Pulse buoyancy arrows gently
+  if(showBuoy){
+    buoyGroup.children.forEach((obj,i)=>{
+      if(obj.isArrowHelper){
+        const s=0.92+Math.sin(T*1.2+i*0.8)*0.08;
+        obj.scale.y=s;
+      }
+    });
+  }
+
+  // Pulse FBG sensors
+  turbineGroup.children.forEach(obj=>{
+    if(obj.isMesh&&obj.userData.label&&obj.userData.label.includes('FBG')){
+      obj.material.emissiveIntensity=0.3+Math.sin(T*2.5+obj.position.x)*0.25;
+    }
+  });
+
+  rimL.position.set(Math.sin(T*0.25)*14,4,Math.cos(T*0.25)*8);
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  renderer.setSize(CW(),CH());
+  camera.aspect=CW()/CH();
+  camera.updateProjectionMatrix();
+});
+</script>
