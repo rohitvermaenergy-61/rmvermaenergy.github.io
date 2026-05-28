@@ -3,23 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RMVermaEnergy - Research Portfolio</title>
+  <title>RMVermaEnergy — Novel Ideas Taking Shape</title>
+
   <style>
-    body {
-      font-family: "Times New Roman", serif;
-      background-color: #121212;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+    :root {
+      --bg-dark: #0f0f0f;
+      --text-light: #f4f4f4;
+      --accent: #00aaff;
+      --card-bg: #1a1a1a;
+      --border: #333;
     }
 
-    h1, h2 {
-      color: #ffffff;
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Times New Roman', serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header img {
+      width: 180px;
+      border-radius: 50%;
+      margin-top: 1rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      color: var(--accent);
+      margin-bottom: 0.5rem;
     }
 
     a {
-      color: #9ecfff;
+      color: var(--accent);
       text-decoration: none;
     }
 
@@ -27,181 +63,136 @@
       text-decoration: underline;
     }
 
-    #themeToggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #333;
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
+    ul {
+      list-style-type: none;
+      padding-left: 0;
     }
 
-    #themeToggle:hover {
-      background-color: #555;
+    li {
+      margin: 0.4rem 0;
     }
 
-    .logo {
-      display: block;
-      margin: 10px auto 20px;
-      width: 250px;
-      max-width: 80%;
-      height: auto;
-    }
-
-    .card-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 900px;
-      gap: 20px;
-    }
-
-    .card {
-      background-color: #1e1e1e;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-      text-align: left;
-      width: 100%;
-      min-height: 200px;
-    }
-
-    /* Feedback Card */
-    .feedback-card {
-      background-color: #1e1e1e;
-      border-radius: 8px;
-      padding: 25px;
-      margin: 40px auto;
-      width: 90%;
-      max-width: 900px;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
-      text-align: left;
-    }
-
-    .feedback-card input,
-    .feedback-card textarea {
+    input, textarea {
       width: 100%;
       padding: 10px;
-      margin-top: 8px;
-      margin-bottom: 15px;
+      margin: 8px 0;
+      background: #111;
+      border: 1px solid #333;
+      color: #fff;
       border-radius: 5px;
-      border: none;
-      font-size: 16px;
     }
 
-    .feedback-card button {
-      background-color: #4a90e2;
-      color: white;
-      padding: 10px 18px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .feedback-card button:hover {
-      background-color: #357ac9;
-    }
-
-    /* Light theme */
-    body.light-mode {
-      background-color: #f5f5f5;
-      color: #222;
-    }
-
-    body.light-mode .card,
-    body.light-mode .feedback-card {
-      background-color: #ffffff;
-      color: #222;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    body.light-mode #themeToggle {
-      background-color: #ddd;
+    button {
+      padding: 10px 20px;
+      background: var(--accent);
       color: #000;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
     }
 
-    img {
-      max-width: 100%;
-      height: auto;
+    button:hover {
+      opacity: 0.85;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
     }
   </style>
 </head>
 
 <body>
-  <button id="themeToggle">Dark / Light</button>
 
-  <h1>Novel Ideas Taking Shape</h1>
+  <!-- HEADER -->
+  <header>
+    <h1>Novel Ideas Taking Shape</h1>
+    <img src="logo.png" alt="RMVermaEnergy Logo">
+  </header>
 
-  <!-- Logo Section -->
-  <img src="rmv-logo.png" alt="RMVermaEnergy Research Portfolio Logo" class="logo">
+  <!-- ABOUT SECTION -->
+  <div class="section">
+    <h2>About RMVermaEnergy</h2>
+    <p>
+      RMVermaEnergy is a research initiative dedicated to developing multi‑function subsea and renewable‑energy 
+      infrastructure. Its motive is to unify engineering innovation with open scientific transparency — publishing 
+      versioned technical editions that evolve through analysis, simulation, and validation.
+    </p>
 
-  <div class="card-container">
-
-    <!-- HVDC Section -->
-    <div class="card">
-      <h2>HVDC Tidal Energy Transmission</h2>
-      <p>
-        A novel framework exploring the feasibility of high-voltage direct current (HVDC) transmission for tidal energy systems.
-        This work evolves through multiple iterations, refining assumptions, models, and engineering considerations.
-      </p>
-
-      <p><strong>Zenodo Series DOI:</strong> 10.5281/zenodo.20361346</p>
-      <ul>
-        <li>Version 4.0 — <a href="https://doi.org/10.5281/zenodo.20363193">10.5281/zenodo.20363193</a></li>
-        <li>Version 3.0 — <a href="https://doi.org/10.5281/zenodo.20363132">10.5281/zenodo.20363132</a></li>
-        <li>Version 2.0 — <a href="https://doi.org/10.5281/zenodo.20363008">10.5281/zenodo.20363008</a></li>
-        <li>Version 1.0 — <a href="https://doi.org/10.5281/zenodo.20361347">10.5281/zenodo.20361347</a></li>
-      </ul>
-
-      <p>
-        <a href="hvdc-evolution.html">🔗 View Evolution →</a>
-      </p>
-    </div>
-
-    <!-- SIIC Section -->
-    <div class="card">
-      <h2>SUBSEA INTEGRATED INFRASTRUCTURE CORRIDOR(SIIC) Project</h2>
-      <p>"A 4‑system integrated controller for tunnel‑based energy corridors, delivering zero‑emission transport and continuous power generation with ultra‑low maintenance — at a fraction of the cost of mega‑projects like the English Channel route.”</p>
-    </div>
-
-    <!-- Upcoming Project Section -->
-    <div class="card">
-      <h2>Upcoming Project</h2>
-      <p>Stay tuned for the next research initiative under RMVermaEnergy.</p>
-    </div>
-
+    <ul>
+      <li>⚙️ Focus: HVDC transmission, tidal energy, pneumatic freight, magnetic‑fin MHD, AI‑based control.</li>
+      <li>📘 Principle: <em>“Novel Ideas Taking Shape”</em> — each version refines the previous one.</li>
+      <li>🌊 Mission: Advance sustainable ocean‑energy systems through HVDC and SIIC frameworks.</li>
+      <li>🔗 Open Access: All projects archived on Zenodo with permanent DOIs.</li>
+    </ul>
   </div>
 
-  <!-- FEEDBACK SECTION (Option C) -->
-  <div class="feedback-card">
-    <h2>Feedback & Peer Review</h2>
-    <p>Constructive critique is welcome. Your feedback helps improve clarity, correctness, and the overall strength of these research ideas.</p>
+  <!-- HVDC SERIES -->
+  <div class="section">
+    <h2>HVDC Tidal Energy Transmission</h2>
+    <p>
+      A novel framework exploring the feasibility of high‑voltage direct current (HVDC) transmission for tidal energy 
+      systems. This work evolves through multiple iterations, refining assumptions, models, and engineering considerations.
+    </p>
 
-    <form action="https://formspree.io/f/mqakjvkw" method="POST">
-      <label>Your Name</label>
-      <input type="text" name="name" placeholder="Optional">
+    <p><strong>Zenodo Series DOI:</strong> 
+      <a href="https://doi.org/10.5281/zenodo.20361346" target="_blank">10.5281/zenodo.20361346</a>
+    </p>
 
-      <label>Your Email</label>
-      <input type="email" name="email" placeholder="Optional">
+    <ul>
+      <li>Version 4.0 — <a href="https://doi.org/10.5281/zenodo.20363193" target="_blank">10.5281/zenodo.20363193</a></li>
+      <li>Version 3.0 — <a href="https://doi.org/10.5281/zenodo.20363132" target="_blank">10.5281/zenodo.20363132</a></li>
+      <li>Version 2.0 — <a href="https://doi.org/10.5281/zenodo.20363008" target="_blank">10.5281/zenodo.20363008</a></li>
+      <li>Version 1.0 — <a href="https://doi.org/10.5281/zenodo.20361347" target="_blank">10.5281/zenodo.20361347</a></li>
+    </ul>
 
-      <label>Your Feedback</label>
-      <textarea name="message" rows="5" placeholder="Share your thoughts, critique, or suggestions..." required></textarea>
+    <p><a href="hvdc-evolution.html">View Evolution →</a></p>
+  </div>
+
+  <!-- SIIC PROJECT -->
+  <div class="section">
+    <h2>Subsea Integrated Infrastructure Corridor (SIIC)</h2>
+    <p>
+      The SIIC project extends the HVDC Tidal series by integrating pneumatic freight transport, HVDC transmission,
+      tidal energy generation, and magnetic‑fin MHD augmentation into a single neutrally buoyant mid‑depth structure.
+    </p>
+
+    <p><strong>Zenodo DOI:</strong> 
+      <a href="https://doi.org/10.5281/zenodo.20419309" target="_blank">10.5281/zenodo.20419309</a>
+    </p>
+
+    <p><a href="siic.html">View Project →</a></p>
+  </div>
+
+  <!-- FEEDBACK SECTION -->
+  <div class="section">
+    <h2>Peer Review & Feedback</h2>
+    <p>
+      Constructive critique is welcome. Your feedback helps improve clarity, correctness, 
+      and the overall strength of these research ideas.
+    </p>
+
+    <form action="https://formspree.io/f/your-form-id" method="POST">
+      <label for="name">Name (optional)</label>
+      <input type="text" id="name" name="name">
+
+      <label for="email">Email (optional)</label>
+      <input type="email" id="email" name="email">
+
+      <label for="message">Feedback</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
 
       <button type="submit">Submit Feedback</button>
     </form>
   </div>
 
-  <script>
-    const toggleButton = document.getElementById('themeToggle');
-    toggleButton.addEventListener('click', () => {
-      document.body.classList.toggle('light-mode');
-    });
-  </script>
+  <!-- FOOTER -->
+  <footer>
+    © 2026 RMVermaEnergy — Research Portfolio | Open Science Framework Integration
+  </footer>
+
 </body>
 </html>
