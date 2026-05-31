@@ -157,7 +157,7 @@
 
 /* Running message styles */
 .running-message {
-  width: 120%;
+  width: 100%;
   overflow: hidden;
   white-space: nowrap;
   box-sizing: border-box;
@@ -165,10 +165,11 @@
   font-size: 1rem;
   font-weight: 600;
   color: #ffcc00;
-  animation: scroll-left 25s linear infinite, flash 1.0s ease-in-out infinite;
+  animation: scroll-left 25s linear infinite;
   text-align: center;
 }
 
+/* Smooth scrolling animation */
 @keyframes scroll-left {
   0% {
     transform: translateX(100%);
@@ -177,6 +178,7 @@
     transform: translateX(-100%);
   }
 }
+
 
 @keyframes flash {
   0%, 100% {
