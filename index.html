@@ -150,6 +150,44 @@
     font-size: 1.1rem;
     color: #888;
   }
+    .tagline p {
+  font-size: 1.1rem;
+  color: #888;
+}
+
+/* Running message styles */
+.running-message {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 8px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffcc00;
+  animation: scroll-left 12s linear infinite, flash 1.2s ease-in-out infinite;
+  text-align: center;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes flash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+</style>
+
   </style>
 </head>
 
